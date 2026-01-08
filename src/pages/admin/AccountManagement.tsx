@@ -414,7 +414,6 @@ export default function AccountManagement() {
               <TableHead>NRIC</TableHead>
               <TableHead>Age</TableHead>
               <TableHead>Balance</TableHead>
-              <TableHead>Payment Status</TableHead>
               <TableHead>Education Level</TableHead>
               <TableHead>Courses</TableHead>
               <TableHead>Outstanding Fees</TableHead>
@@ -424,7 +423,7 @@ export default function AccountManagement() {
             {filteredAccounts.length === 0 ? (
               <TableRow>
                 <TableCell
-                  colSpan={8}
+                  colSpan={7}
                   className="text-center py-8 text-muted-foreground"
                 >
                   No accounts found matching your criteria
@@ -489,9 +488,6 @@ export default function AccountManagement() {
                     <TableCell className="text-foreground">{age}</TableCell>
                     <TableCell className="font-semibold text-foreground">
                       ${Number(account.balance).toFixed(2)}
-                    </TableCell>
-                    <TableCell>
-                      <StatusBadge status={account.inSchool} />
                     </TableCell>
                     <TableCell className="text-muted-foreground">
                       {account.educationLevel

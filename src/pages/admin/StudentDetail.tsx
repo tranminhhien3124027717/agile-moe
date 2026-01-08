@@ -350,11 +350,13 @@ export default function StudentDetail() {
                 isUpcoming ? "text-warning" : "text-foreground"
               }`}
             >
-              {item.nextPaymentDate.toLocaleDateString("en-GB", {
-                day: "2-digit",
-                month: "short",
-                year: "numeric",
-              })}
+              {item.nextPaymentDate
+                .toLocaleDateString("en-GB", {
+                  day: "2-digit",
+                  month: "2-digit",
+                  year: "numeric",
+                })
+                .replace(/\//g, "/")}
             </p>
             <p className="text-xs text-muted-foreground">
               {daysUntil === 0
@@ -402,12 +404,50 @@ export default function StudentDetail() {
         </span>
       ),
     },
+  ];
+
+  const paymentHistoryColumns = [
     {
-      key: "status",
-      header: "Status",
+      key: "course_name",
+      header: "Course",
       render: (item: (typeof studentCharges)[0]) => (
-        <StatusBadge status={item.status} />
+        <span className="font-medium text-foreground">{item.courseName}</span>
       ),
+    },
+    {
+      key: "amount",
+      header: "Amount",
+      render: (item: (typeof studentCharges)[0]) => (
+        <span className="font-semibold text-foreground">
+          ${Number(item.amount).toFixed(2)}
+        </span>
+      ),
+    },
+    {
+      key: "due_date",
+      header: "Due Date",
+      render: (item: (typeof studentCharges)[0]) => (
+        <span className="text-muted-foreground">
+          {new Date(item.dueDate).toLocaleDateString()}
+        </span>
+      ),
+    },
+    {
+      key: "payment_method",
+      header: "Payment Method",
+      render: (item: (typeof studentCharges)[0]) => {
+        const methodLabels: Record<string, string> = {
+          account_balance: "Account Balance",
+          credit_card: "Credit/Debit Card",
+          bank_transfer: "Bank Transfer",
+        };
+        const method = item.paymentMethod || "account_balance";
+        return (
+          <span className="text-muted-foreground">
+            {methodLabels[method] || "Account Balance"}
+          </span>
+        );
+      },
     },
   ];
 
@@ -442,12 +482,12 @@ export default function StudentDetail() {
               <AlertDialogTrigger asChild>
                 <Button variant="destructive">
                   <XCircle className="h-4 w-4 mr-2" />
-                  Delete Account
+                  Close Account
                 </Button>
               </AlertDialogTrigger>
               <AlertDialogContent>
                 <AlertDialogHeader>
-                  <AlertDialogTitle>Delete Student Account?</AlertDialogTitle>
+                  <AlertDialogTitle>Close Student Account?</AlertDialogTitle>
                   <AlertDialogDescription>
                     This will permanently delete the account for {account.name}.
                     This action cannot be undone. The student will no longer be
@@ -466,7 +506,7 @@ export default function StudentDetail() {
                     onClick={handleCloseAccount}
                     className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
                   >
-                    Delete Account
+                    Close Account
                   </AlertDialogAction>
                 </AlertDialogFooter>
               </AlertDialogContent>
@@ -483,12 +523,33 @@ export default function StudentDetail() {
           </DialogHeader>
           <div className="grid gap-4 py-4">
             <div className="grid gap-2">
+              <Label htmlFor="editNric">NRIC *</Label>
+              <Input
+                id="editNric"
+                value={account.nric}
+                disabled
+                className="bg-muted"
+              />
+            </div>
+
+            <div className="grid gap-2">
               <Label htmlFor="editName">Full Name *</Label>
               <Input
                 id="editName"
                 value={editName}
-                onChange={(e) => setEditName(e.target.value)}
-                placeholder="Enter full name"
+                disabled
+                className="bg-muted"
+              />
+            </div>
+
+            <div className="grid gap-2">
+              <Label htmlFor="editDateOfBirth">Date of Birth *</Label>
+              <Input
+                id="editDateOfBirth"
+                type="date"
+                value={editDateOfBirth}
+                disabled
+                className="bg-muted"
               />
             </div>
 
@@ -510,16 +571,6 @@ export default function StudentDetail() {
                 value={editPhone}
                 onChange={(e) => setEditPhone(e.target.value)}
                 placeholder="Enter phone number"
-              />
-            </div>
-
-            <div className="grid gap-2">
-              <Label htmlFor="editDateOfBirth">Date of Birth *</Label>
-              <Input
-                id="editDateOfBirth"
-                type="date"
-                value={editDateOfBirth}
-                onChange={(e) => setEditDateOfBirth(e.target.value)}
               />
             </div>
 
@@ -755,9 +806,25 @@ export default function StudentDetail() {
             </div>
             <div className="space-y-1">
               <p className="text-xs text-muted-foreground uppercase tracking-wide">
-                Payment Status
+                Schooling Status
               </p>
               <StatusBadge status={account.inSchool} />
+            </div>
+            <div className="space-y-1">
+              <p className="text-xs text-muted-foreground uppercase tracking-wide">
+                Registered Address
+              </p>
+              <p className="font-medium text-foreground">
+                {account.residentialAddress || "—"}
+              </p>
+            </div>
+            <div className="space-y-1">
+              <p className="text-xs text-muted-foreground uppercase tracking-wide">
+                Mailing Address
+              </p>
+              <p className="font-medium text-foreground">
+                {account.mailingAddress || "—"}
+              </p>
             </div>
             <div className="space-y-1">
               <p className="text-xs text-muted-foreground uppercase tracking-wide">
@@ -820,7 +887,7 @@ export default function StudentDetail() {
         <CardContent>
           <DataTable
             data={clearCharges}
-            columns={chargeColumns}
+            columns={paymentHistoryColumns}
             emptyMessage="No payment history"
           />
         </CardContent>

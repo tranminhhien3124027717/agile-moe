@@ -64,7 +64,14 @@ export default function AdminDashboard() {
     .filter((t) => t.type === "top_up" && t.status === "completed")
     .reduce((sum, t) => sum + Number(t.amount), 0);
 
+  // Filter only scheduled, canceled, and completed top-ups
   const recentSchedules = [...topUpSchedules]
+    .filter(
+      (s) =>
+        s.status === "scheduled" ||
+        s.status === "canceled" ||
+        s.status === "completed"
+    )
     .sort(
       (a, b) =>
         new Date(b.scheduledDate).getTime() -
@@ -166,14 +173,6 @@ export default function AdminDashboard() {
           <p className="text-muted-foreground mt-1">
             Overview of education account system
           </p>
-        </div>
-        <div className="flex gap-3">
-          <Link to="/admin/topup">
-            <Button variant="accent">
-              <Wallet className="h-4 w-4 mr-2" />
-              Manage Top-ups
-            </Button>
-          </Link>
         </div>
       </div>
 

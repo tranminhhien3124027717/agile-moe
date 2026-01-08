@@ -17,6 +17,7 @@ export type TopUpScheduleStatus =
   | "scheduled"
   | "processing"
   | "completed"
+  | "canceled"
   | "failed";
 export type TopUpScheduleType = "batch" | "individual";
 export type TransactionStatus = "completed" | "pending" | "failed";

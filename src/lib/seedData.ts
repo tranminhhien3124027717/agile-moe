@@ -267,7 +267,7 @@ export const seedDatabase = async () => {
         paidDate: formatDate(
           new Date(today.getFullYear(), today.getMonth() - 2, 3)
         ),
-        paymentMethod: "education_account",
+        paymentMethod: "account_balance",
       },
       {
         accountId: accountIds[0],
@@ -282,7 +282,7 @@ export const seedDatabase = async () => {
         paidDate: formatDate(
           new Date(today.getFullYear(), today.getMonth() - 1, 4)
         ),
-        paymentMethod: "education_account",
+        paymentMethod: "credit_card",
       },
       {
         accountId: accountIds[0],
@@ -306,7 +306,7 @@ export const seedDatabase = async () => {
         paidDate: formatDate(
           new Date(today.getFullYear(), today.getMonth() - 1, 8)
         ),
-        paymentMethod: "online",
+        paymentMethod: "bank_transfer",
       },
       {
         accountId: accountIds[1],
