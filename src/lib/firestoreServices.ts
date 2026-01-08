@@ -319,6 +319,10 @@ export const courseChargesService = {
     });
   },
 
+  async delete(id: string) {
+    await deleteDoc(doc(db, "course_charges", id));
+  },
+
   async payCharge(id: string, paymentMethod: "education_account" | "online") {
     const docRef = doc(db, "course_charges", id);
     const docSnap = await getDoc(docRef);
@@ -406,6 +410,10 @@ export const transactionsService = {
     });
     return docRef.id;
   },
+
+  async delete(id: string) {
+    await deleteDoc(doc(db, "transactions", id));
+  },
 };
 
 // Top Up Rules
@@ -489,6 +497,10 @@ export const topUpSchedulesService = {
       ...data,
       updatedAt: Timestamp.now(),
     });
+  },
+
+  async delete(id: string) {
+    await deleteDoc(doc(db, "top_up_schedules", id));
   },
 
   async executeTopUp(scheduleId: string) {

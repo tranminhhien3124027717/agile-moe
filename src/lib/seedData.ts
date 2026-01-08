@@ -44,16 +44,18 @@ export const seedDatabase = async () => {
   console.log("🌱 Starting database seeding...");
 
   try {
-    // Step 1: Clear existing data
+    // Step 1: Clear existing data (including rules and execution history)
     console.log("🗑️  Clearing existing data...");
-    await clearCollection(topUpSchedulesService, "top_up_schedules");
-    await clearCollection(topUpRulesService, "top_up_rules");
+    await clearCollection(topUpSchedulesService, "top_up_schedules"); // Execution history
+    await clearCollection(topUpRulesService, "top_up_rules"); // Top-up rules
     await clearCollection(transactionsService, "transactions");
     await clearCollection(courseChargesService, "course_charges");
     await clearCollection(enrollmentsService, "enrollments");
     await clearCollection(coursesService, "courses");
     await clearCollection(accountHoldersService, "account_holders");
-    console.log("✅ All existing data cleared\n");
+    console.log(
+      "✅ All existing data cleared (including rules and execution history)\n"
+    );
 
     // Step 2: Seed Account Holders
     console.log("Creating account holders...");
@@ -463,12 +465,127 @@ export const seedDatabase = async () => {
       },
     ];
 
+    const ruleIds: string[] = [];
     let ruleCount = 0;
     for (const rule of rules) {
-      await topUpRulesService.create(rule);
+      const id = await topUpRulesService.create(rule);
+      ruleIds.push(id);
       ruleCount++;
     }
     console.log(`✅ Created ${ruleCount} top-up rules`);
+
+    // Seed Top-Up Schedules (Execution History)
+    console.log("Creating top-up schedules and execution history...");
+    const schedules = [
+      // Completed batch top-ups (executed rules)
+      {
+        type: "batch" as const,
+        ruleId: ruleIds[0], // Tertiary Education Students
+        amount: 2000,
+        scheduledDate: "2025-01-15",
+        executedDate: "2025-01-15",
+        status: "completed" as const,
+        eligibleCount: 2,
+        processedCount: 2,
+        remarks: "Monthly batch top-up for tertiary students",
+      },
+      {
+        type: "batch" as const,
+        ruleId: ruleIds[1], // Post-Secondary Students
+        amount: 500,
+        scheduledDate: "2025-02-01",
+        executedDate: "2025-02-01",
+        status: "completed" as const,
+        eligibleCount: 1,
+        processedCount: 1,
+        remarks: "Quarterly support for post-secondary students",
+      },
+      {
+        type: "batch" as const,
+        ruleId: ruleIds[2], // Continuing Learners
+        amount: 1500,
+        scheduledDate: "2025-03-01",
+        executedDate: "2025-03-01",
+        status: "completed" as const,
+        eligibleCount: 1,
+        processedCount: 1,
+        remarks: "Skill upgrade grant for continuing learners",
+      },
+      // Individual top-ups (completed)
+      {
+        type: "individual" as const,
+        accountId: accountIds[0],
+        amount: 1000,
+        scheduledDate: "2025-04-10",
+        executedDate: "2025-04-10",
+        status: "completed" as const,
+        eligibleCount: 1,
+        processedCount: 1,
+        remarks: "Emergency financial assistance",
+      },
+      {
+        type: "individual" as const,
+        accountId: accountIds[3],
+        amount: 500,
+        scheduledDate: "2025-05-15",
+        executedDate: "2025-05-15",
+        status: "completed" as const,
+        eligibleCount: 1,
+        processedCount: 1,
+        remarks: "Special circumstance top-up",
+      },
+      // Scheduled (upcoming)
+      {
+        type: "batch" as const,
+        ruleId: ruleIds[0], // Tertiary Education Students
+        amount: 2000,
+        scheduledDate: "2026-02-01",
+        status: "scheduled" as const,
+        remarks: "Scheduled batch top-up for February 2026",
+      },
+      {
+        type: "batch" as const,
+        ruleId: ruleIds[3], // Low Balance Support
+        amount: 1000,
+        scheduledDate: "2026-01-20",
+        status: "scheduled" as const,
+        remarks: "Emergency fund distribution",
+      },
+      {
+        type: "individual" as const,
+        accountId: accountIds[1],
+        amount: 800,
+        scheduledDate: "2026-01-25",
+        status: "scheduled" as const,
+        remarks: "Approved exceptional case top-up",
+      },
+      // Canceled
+      {
+        type: "batch" as const,
+        ruleId: ruleIds[1],
+        amount: 500,
+        scheduledDate: "2025-12-15",
+        status: "canceled" as const,
+        remarks: "Canceled due to policy review",
+      },
+      {
+        type: "individual" as const,
+        accountId: accountIds[2],
+        amount: 600,
+        scheduledDate: "2025-11-30",
+        status: "canceled" as const,
+        remarks: "Student withdrawn request",
+      },
+    ];
+
+    let scheduleCount = 0;
+    for (const schedule of schedules) {
+      await topUpSchedulesService.create(schedule);
+      scheduleCount++;
+    }
+    console.log(
+      `✅ Created ${scheduleCount} top-up schedules (execution history)`
+    );
 
     console.log("✨ Database seeding completed successfully!");
     return {
@@ -478,6 +595,7 @@ export const seedDatabase = async () => {
       charges: chargeCount,
       transactions: transactionCount,
       rules: ruleCount,
+      schedules: scheduleCount,
     };
   } catch (error) {
     console.error("❌ Error seeding database:", error);
