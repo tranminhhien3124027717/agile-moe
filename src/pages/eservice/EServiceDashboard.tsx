@@ -31,22 +31,6 @@ export default function EServiceDashboard() {
   );
   const activeEnrollments = enrollments.filter((e) => e.status === "active");
 
-  console.log("EServiceDashboard DEBUG:", {
-    currentUserId: currentUser.id,
-    totalEnrollments: enrollments.length,
-    activeEnrollments: activeEnrollments.length,
-    enrollmentsWithCourse: activeEnrollments.filter((e) => e.course).length,
-    totalCharges: courseCharges.length,
-    pendingCharges: pendingCharges.length,
-    enrollmentsDetail: activeEnrollments.map((e) => ({
-      id: e.id,
-      courseId: e.courseId,
-      hasCourse: !!e.course,
-      courseName: e.course?.name || "NO COURSE",
-      status: e.status,
-    })),
-  });
-
   const outstandingAmount = pendingCharges.reduce(
     (sum, c) => sum + Number(c.amount),
     0
@@ -139,13 +123,6 @@ export default function EServiceDashboard() {
     paymentStatus: "overdue" | "outstanding" | "fully_paid";
   }[];
 
-  console.log(
-    "CourseData length:",
-    courseData.length,
-    "CourseData:",
-    courseData
-  );
-
   const billingCycleLabels: Record<string, string> = {
     monthly: "Monthly",
     quarterly: "Quarterly",
@@ -198,7 +175,7 @@ export default function EServiceDashboard() {
         <span className="text-muted-foreground">
           {new Date(item.enrollmentDate).toLocaleDateString("en-GB", {
             day: "2-digit",
-            month: "short",
+            month: "2-digit",
             year: "numeric",
           })}
         </span>
@@ -223,7 +200,7 @@ export default function EServiceDashboard() {
             >
               {item.nextPaymentDate.toLocaleDateString("en-GB", {
                 day: "2-digit",
-                month: "short",
+                month: "2-digit",
                 year: "numeric",
               })}
             </p>

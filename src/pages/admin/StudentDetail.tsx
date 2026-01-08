@@ -327,7 +327,7 @@ export default function StudentDetail() {
         <span className="text-muted-foreground">
           {new Date(item.enrollmentDate).toLocaleDateString("en-GB", {
             day: "2-digit",
-            month: "short",
+            month: "2-digit",
             year: "numeric",
           })}
         </span>
@@ -592,24 +592,6 @@ export default function StudentDetail() {
                 onChange={(e) => setEditMailingAddress(e.target.value)}
                 placeholder="Enter mailing address"
               />
-            </div>
-
-            <div className="grid gap-2">
-              <Label>Schooling Status *</Label>
-              <Select
-                value={editInSchool}
-                onValueChange={(v) =>
-                  setEditInSchool(v as "in_school" | "not_in_school")
-                }
-              >
-                <SelectTrigger>
-                  <SelectValue placeholder="Select schooling status" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="in_school">In School</SelectItem>
-                  <SelectItem value="not_in_school">Not In School</SelectItem>
-                </SelectContent>
-              </Select>
             </div>
 
             <div className="grid gap-2">

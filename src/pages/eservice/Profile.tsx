@@ -93,10 +93,6 @@ export default function Profile() {
             <h2 className="text-xl font-bold text-foreground">
               {currentUser.name}
             </h2>
-            <p className="text-muted-foreground">{currentUser.nric}</p>
-            <div className="flex items-center gap-3 mt-2">
-              <StatusBadge status={currentUser.inSchool} />
-            </div>
           </div>
         </div>
       </div>
@@ -137,15 +133,24 @@ export default function Profile() {
               Date of Birth
             </p>
             <p className="font-medium text-foreground">
-              {dob.toLocaleDateString()} ({age} years old)
+              {dob.toLocaleDateString("en-GB", {
+                day: "2-digit",
+                month: "2-digit",
+                year: "numeric",
+              })}{" "}
+              ({age} years old)
             </p>
           </div>
           <div className="space-y-1">
             <p className="text-xs text-muted-foreground uppercase tracking-wide">
-              Account Balance
+              Account Created
             </p>
-            <p className="font-semibold text-success text-lg">
-              ${Number(currentUser.balance).toFixed(2)}
+            <p className="font-medium text-foreground">
+              {new Date(currentUser.createdAt).toLocaleDateString("en-GB", {
+                day: "2-digit",
+                month: "2-digit",
+                year: "numeric",
+              })}
             </p>
           </div>
           <div className="space-y-1">
@@ -169,13 +174,6 @@ export default function Profile() {
                 : "Not specified"}
             </p>
           </div>
-        </div>
-
-        <div className="rounded-lg bg-muted/50 p-3">
-          <p className="text-xs text-muted-foreground">
-            To update your name, NRIC, or date of birth, please visit a service
-            center with valid identification documents.
-          </p>
         </div>
       </div>
 

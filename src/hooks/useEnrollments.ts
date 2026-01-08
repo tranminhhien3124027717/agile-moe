@@ -55,6 +55,8 @@ export function useEnrollmentsByAccount(accountId: string | undefined) {
       })) as EnrollmentWithDetails[];
     },
     enabled: !!accountId,
+    refetchOnMount: true,
+    staleTime: 0, // Always fetch fresh data
   });
 }
 

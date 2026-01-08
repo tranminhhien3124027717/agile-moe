@@ -197,33 +197,56 @@ export const enrollmentsService = {
   },
 
   async getByAccountId(accountId: string) {
-    const q = query(
-      collection(db, "enrollments"),
-      where("accountId", "==", accountId),
-      orderBy("createdAt", "desc")
-    );
-    const querySnapshot = await getDocs(q);
-    return querySnapshot.docs.map((doc) => ({
-      id: doc.id,
-      ...doc.data(),
-      createdAt: timestampToString(doc.data().createdAt),
-      updatedAt: timestampToString(doc.data().updatedAt),
-    })) as Enrollment[];
+    try {
+      const q = query(
+        collection(db, "enrollments"),
+        where("accountId", "==", accountId)
+        // Note: orderBy requires a composite index in Firestore
+        // We sort on the client side instead
+      );
+      const querySnapshot = await getDocs(q);
+      const results = querySnapshot.docs.map((doc) => ({
+        id: doc.id,
+        ...doc.data(),
+        createdAt: timestampToString(doc.data().createdAt),
+        updatedAt: timestampToString(doc.data().updatedAt),
+      })) as Enrollment[];
+
+      // Sort by createdAt descending on client side
+      results.sort(
+        (a, b) =>
+          new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+      );
+
+      return results;
+    } catch (error) {
+      console.error("enrollmentsService.getByAccountId error:", error);
+      throw error;
+    }
   },
 
   async getByCourseId(courseId: string) {
     const q = query(
       collection(db, "enrollments"),
-      where("courseId", "==", courseId),
-      orderBy("createdAt", "desc")
+      where("courseId", "==", courseId)
+      // Note: orderBy requires a composite index in Firestore
+      // We sort on the client side instead
     );
     const querySnapshot = await getDocs(q);
-    return querySnapshot.docs.map((doc) => ({
+    const results = querySnapshot.docs.map((doc) => ({
       id: doc.id,
       ...doc.data(),
       createdAt: timestampToString(doc.data().createdAt),
       updatedAt: timestampToString(doc.data().updatedAt),
     })) as Enrollment[];
+
+    // Sort by createdAt descending on client side
+    results.sort(
+      (a, b) =>
+        new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+    );
+
+    return results;
   },
 
   async create(data: Omit<Enrollment, "id" | "createdAt" | "updatedAt">) {
