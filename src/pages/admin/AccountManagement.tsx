@@ -228,6 +228,8 @@ export default function AccountManagement() {
                     placeholder="Enter full name"
                     value={fullName}
                     onChange={(e) => setFullName(e.target.value)}
+                    disabled
+                    className="bg-muted"
                   />
                 </div>
               </div>
@@ -240,6 +242,8 @@ export default function AccountManagement() {
                     type="date"
                     value={dateOfBirth}
                     onChange={(e) => setDateOfBirth(e.target.value)}
+                    disabled
+                    className="bg-muted"
                   />
                 </div>
                 <div className="grid gap-2">
@@ -265,28 +269,6 @@ export default function AccountManagement() {
                   />
                 </div>
                 <div className="grid gap-2">
-                  <Label htmlFor="inSchool">Schooling Status *</Label>
-                  <Select
-                    value={inSchool}
-                    onValueChange={(v: "in_school" | "not_in_school") =>
-                      setInSchool(v)
-                    }
-                  >
-                    <SelectTrigger>
-                      <SelectValue placeholder="Select status" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="in_school">In School</SelectItem>
-                      <SelectItem value="not_in_school">
-                        Not in School
-                      </SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
-              </div>
-
-              <div className="grid gap-4 sm:grid-cols-2">
-                <div className="grid gap-2">
                   <Label htmlFor="educationLevel">Education Level</Label>
                   <Select
                     value={educationLevel}
@@ -303,28 +285,6 @@ export default function AccountManagement() {
                       </SelectItem>
                       <SelectItem value="tertiary">Tertiary</SelectItem>
                       <SelectItem value="postgraduate">Postgraduate</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
-                <div className="grid gap-2">
-                  <Label htmlFor="reason">Reason for Manual Creation</Label>
-                  <Select value={reason} onValueChange={setReason}>
-                    <SelectTrigger>
-                      <SelectValue placeholder="Select reason" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="late_registration">
-                        Late Registration
-                      </SelectItem>
-                      <SelectItem value="data_migration">
-                        Data Migration
-                      </SelectItem>
-                      <SelectItem value="special_approval">
-                        Special Approval
-                      </SelectItem>
-                      <SelectItem value="system_error">
-                        System Error Recovery
-                      </SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
