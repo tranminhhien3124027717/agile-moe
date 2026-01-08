@@ -133,3 +133,12 @@ export interface TopUpSchedule {
   createdAt: string;
   updatedAt: string;
 }
+
+export interface NricRegistry {
+  id: string;
+  nric: string;
+  fullName: string;
+  dateOfBirth: string;
+  createdAt: string;
+  updatedAt: string;
+}

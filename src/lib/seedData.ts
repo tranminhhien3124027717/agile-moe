@@ -6,6 +6,7 @@ import {
   transactionsService,
   topUpRulesService,
   topUpSchedulesService,
+  nricRegistryService,
 } from "./firestoreServices";
 
 // Helper to generate random date
@@ -53,9 +54,97 @@ export const seedDatabase = async () => {
     await clearCollection(enrollmentsService, "enrollments");
     await clearCollection(coursesService, "courses");
     await clearCollection(accountHoldersService, "account_holders");
+    await clearCollection(nricRegistryService, "nric_registry"); // NRIC Registry
     console.log(
       "✅ All existing data cleared (including rules and execution history)\n"
     );
+
+    // Step 1.5: Seed NRIC Registry (must be first for auto-fill to work)
+    console.log("Creating NRIC registry...");
+    const nricRecords = [
+      {
+        nric: "S9107890E",
+        fullName: "Tan Wei Ming",
+        dateOfBirth: "1991-03-15",
+      },
+      {
+        nric: "S9205678B",
+        fullName: "Lee Xin Yi",
+        dateOfBirth: "1992-07-22",
+      },
+      {
+        nric: "S8809012C",
+        fullName: "Kumar Rajan",
+        dateOfBirth: "1988-11-08",
+      },
+      {
+        nric: "S9503456D",
+        fullName: "Wong Mei Ling",
+        dateOfBirth: "1995-05-20",
+      },
+      {
+        nric: "S8712345A",
+        fullName: "Tan Ah Kow",
+        dateOfBirth: "1987-09-12",
+      },
+      {
+        nric: "S9601234F",
+        fullName: "Siti Nurhaliza",
+        dateOfBirth: "1996-01-18",
+      },
+      {
+        nric: "S9408765G",
+        fullName: "Raj Kumar Singh",
+        dateOfBirth: "1994-08-25",
+      },
+      {
+        nric: "S9009876H",
+        fullName: "Chen Wei Jie",
+        dateOfBirth: "1990-12-30",
+      },
+      {
+        nric: "S9312345J",
+        fullName: "Fatimah Binte Ali",
+        dateOfBirth: "1993-02-14",
+      },
+      {
+        nric: "S8907654K",
+        fullName: "David Tan Kim Seng",
+        dateOfBirth: "1989-06-08",
+      },
+      {
+        nric: "S9701234L",
+        fullName: "Priya Devi",
+        dateOfBirth: "1997-04-22",
+      },
+      {
+        nric: "S9210987M",
+        fullName: "Muhammad Hafiz",
+        dateOfBirth: "1992-10-05",
+      },
+      {
+        nric: "S8811223N",
+        fullName: "Lim Siew Hoon",
+        dateOfBirth: "1988-03-17",
+      },
+      {
+        nric: "S9504567P",
+        fullName: "Arjun Krishnan",
+        dateOfBirth: "1995-11-28",
+      },
+      {
+        nric: "S9103456Q",
+        fullName: "Emily Ng Su Lin",
+        dateOfBirth: "1991-07-09",
+      },
+    ];
+
+    let nricCount = 0;
+    for (const record of nricRecords) {
+      await nricRegistryService.create(record);
+      nricCount++;
+    }
+    console.log(`✅ Created ${nricCount} NRIC registry records\n`);
 
     // Step 2: Seed Account Holders
     console.log("Creating account holders...");
@@ -589,6 +678,7 @@ export const seedDatabase = async () => {
 
     console.log("✨ Database seeding completed successfully!");
     return {
+      nricRegistry: nricCount,
       accountHolders: accountIds.length,
       courses: courseIds.length,
       enrollments: enrollmentCount,

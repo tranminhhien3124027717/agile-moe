@@ -21,6 +21,7 @@ import type {
   Transaction,
   TopUpRule,
   TopUpSchedule,
+  NricRegistry,
 } from "@/types/firestore";
 
 // Helper to convert Firestore timestamp to ISO string
@@ -624,5 +625,60 @@ export const topUpSchedulesService = {
       });
       throw error;
     }
+  },
+};
+
+// NRIC Registry
+export const nricRegistryService = {
+  async getAll() {
+    const querySnapshot = await getDocs(
+      query(collection(db, "nric_registry"), orderBy("nric", "asc"))
+    );
+    return querySnapshot.docs.map((doc) => ({
+      id: doc.id,
+      ...doc.data(),
+      createdAt: timestampToString(doc.data().createdAt),
+      updatedAt: timestampToString(doc.data().updatedAt),
+    })) as NricRegistry[];
+  },
+
+  async getByNric(nric: string) {
+    const q = query(
+      collection(db, "nric_registry"),
+      where("nric", "==", nric.toUpperCase())
+    );
+    const querySnapshot = await getDocs(q);
+    if (querySnapshot.empty) return null;
+
+    const doc = querySnapshot.docs[0];
+    return {
+      id: doc.id,
+      ...doc.data(),
+      createdAt: timestampToString(doc.data().createdAt),
+      updatedAt: timestampToString(doc.data().updatedAt),
+    } as NricRegistry;
+  },
+
+  async create(data: Omit<NricRegistry, "id" | "createdAt" | "updatedAt">) {
+    const now = Timestamp.now();
+    const docRef = await addDoc(collection(db, "nric_registry"), {
+      ...data,
+      nric: data.nric.toUpperCase(),
+      createdAt: now,
+      updatedAt: now,
+    });
+    return docRef.id;
+  },
+
+  async update(id: string, data: Partial<NricRegistry>) {
+    const docRef = doc(db, "nric_registry", id);
+    await updateDoc(docRef, {
+      ...data,
+      updatedAt: Timestamp.now(),
+    });
+  },
+
+  async delete(id: string) {
+    await deleteDoc(doc(db, "nric_registry", id));
   },
 };

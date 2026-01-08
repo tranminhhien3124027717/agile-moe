@@ -19,6 +19,7 @@ import {
 import { useEnrollments } from "@/hooks/useEnrollments";
 import { useCourses } from "@/hooks/useCourses";
 import { useCourseCharges } from "@/hooks/useCourseCharges";
+import { nricRegistryService } from "@/lib/firestoreServices";
 import {
   Select,
   SelectContent,
@@ -136,6 +137,33 @@ export default function AccountManagement() {
     setReason("");
   };
 
+  // Auto-fill handler for NRIC
+  const handleNricBlur = async () => {
+    const trimmedNric = nric.trim().toUpperCase();
+
+    // Check if NRIC is 9 characters (e.g., S9107890E)
+    if (trimmedNric.length === 9) {
+      try {
+        const registryData = await nricRegistryService.getByNric(trimmedNric);
+
+        if (registryData) {
+          // Auto-fill the fields
+          setFullName(registryData.fullName);
+          setDateOfBirth(registryData.dateOfBirth);
+          toast.success("NRIC verified - Data auto-filled");
+        } else {
+          // NRIC not found in database
+          toast.error("NRIC not found in database");
+          setFullName("");
+          setDateOfBirth("");
+        }
+      } catch (error) {
+        console.error("Error fetching NRIC data:", error);
+        toast.error("Error verifying NRIC");
+      }
+    }
+  };
+
   const handleCreateAccount = async () => {
     if (!nric.trim()) {
       toast.error("Please enter NRIC");
@@ -219,6 +247,8 @@ export default function AccountManagement() {
                     placeholder="S1234567A"
                     value={nric}
                     onChange={(e) => setNric(e.target.value)}
+                    onBlur={handleNricBlur}
+                    maxLength={9}
                   />
                 </div>
                 <div className="grid gap-2">
