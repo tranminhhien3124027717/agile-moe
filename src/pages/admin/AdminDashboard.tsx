@@ -26,6 +26,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 export default function AdminDashboard() {
   const { data: topUpSchedules = [], isLoading: loadingSchedules } =
@@ -64,14 +65,9 @@ export default function AdminDashboard() {
     .filter((t) => t.type === "top_up" && t.status === "completed")
     .reduce((sum, t) => sum + Number(t.amount), 0);
 
-  // Filter only scheduled, canceled, and completed top-ups
-  const recentSchedules = [...topUpSchedules]
-    .filter(
-      (s) =>
-        s.status === "scheduled" ||
-        s.status === "canceled" ||
-        s.status === "completed"
-    )
+  // Recent batch and individual schedules for tracking tabs
+  const recentBatchSchedules = [...topUpSchedules]
+    .filter((s) => s.type === "batch")
     .sort(
       (a, b) =>
         new Date(b.scheduledDate).getTime() -
@@ -79,40 +75,69 @@ export default function AdminDashboard() {
     )
     .slice(0, 8);
 
-  const scheduleColumns = [
+  const recentIndividualSchedules = [...topUpSchedules]
+    .filter((s) => s.type === "individual")
+    .sort(
+      (a, b) =>
+        new Date(b.scheduledDate).getTime() -
+        new Date(a.scheduledDate).getTime()
+    )
+    .slice(0, 8);
+
+  const batchScheduleColumns = [
     {
-      key: "type",
-      header: "Type",
-      render: (item: (typeof topUpSchedules)[0]) => (
-        <div
-          className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium ${
-            item.type === "batch"
-              ? "bg-primary/10 text-primary border border-primary/20"
-              : "bg-accent/10 text-accent border border-accent/20"
-          }`}
-        >
-          {item.type === "batch" ? (
-            <Users className="h-3.5 w-3.5" />
-          ) : (
-            <User className="h-3.5 w-3.5" />
-          )}
-          {item.type === "batch" ? "Batch" : "Individual"}
-        </div>
-      ),
-    },
-    {
-      key: "details",
-      header: "Details",
+      key: "ruleName",
+      header: "Rule Name",
       render: (item: (typeof topUpSchedules)[0]) => (
         <div>
-          <p className="font-medium text-foreground">
-            {item.type === "batch" ? item.ruleName : item.accountName}
-          </p>
-          {item.type === "batch" && item.eligibleCount && (
+          <p className="font-medium text-foreground">{item.ruleName}</p>
+          {item.eligibleCount && (
             <p className="text-xs text-muted-foreground">
               {item.eligibleCount} accounts
             </p>
           )}
+        </div>
+      ),
+    },
+    {
+      key: "amount",
+      header: "Amount",
+      render: (item: (typeof topUpSchedules)[0]) => (
+        <span className="font-semibold text-success">
+          ${Number(item.amount).toFixed(2)}
+        </span>
+      ),
+    },
+    {
+      key: "scheduledDate",
+      header: "Scheduled",
+      render: (item: (typeof topUpSchedules)[0]) => (
+        <div className="text-muted-foreground text-sm">
+          <p>{new Date(item.scheduledDate).toLocaleDateString()}</p>
+          {item.scheduledTime && (
+            <p className="text-xs">{item.scheduledTime}</p>
+          )}
+        </div>
+      ),
+    },
+    {
+      key: "status",
+      header: "Top up Status",
+      render: (item: (typeof topUpSchedules)[0]) => (
+        <StatusBadge
+          status={item.status === "failed" ? "canceled" : item.status}
+        />
+      ),
+    },
+  ];
+
+  const individualScheduleColumns = [
+    {
+      key: "name",
+      header: "Name",
+      render: (item: (typeof topUpSchedules)[0]) => (
+        <div>
+          <p className="font-medium text-foreground">{item.accountName}</p>
           {item.remarks && (
             <p className="text-xs text-muted-foreground">{item.remarks}</p>
           )}
@@ -142,9 +167,11 @@ export default function AdminDashboard() {
     },
     {
       key: "status",
-      header: "Status",
+      header: "Top up Status",
       render: (item: (typeof topUpSchedules)[0]) => (
-        <StatusBadge status={item.status} />
+        <StatusBadge
+          status={item.status === "failed" ? "canceled" : item.status}
+        />
       ),
     },
   ];
@@ -204,92 +231,18 @@ export default function AdminDashboard() {
         />
       </div>
 
-      {/* Upcoming Top-ups (Next 30 Days) */}
-      <div className="rounded-xl border border-border bg-card p-6 shadow-card">
-        <div className="flex items-center justify-between mb-4">
-          <div className="flex items-center gap-2">
-            <Calendar className="h-5 w-5 text-accent" />
-            <h3 className="font-semibold text-foreground">Upcoming Top-ups</h3>
-          </div>
-          <Link to="/admin/topup">
-            <Button variant="ghost" size="sm">
-              View all →
-            </Button>
-          </Link>
-        </div>
-
-        {/* Total Count */}
-        <div className="rounded-lg bg-accent/10 p-4 mb-4">
-          <p className="text-4xl font-bold text-foreground">
-            {upcomingTopUps.length}
-          </p>
-          <p className="text-xs text-muted-foreground mt-1">
-            Scheduled top-ups
-          </p>
-        </div>
-
-        {/* Details List */}
-        {upcomingTopUps.length > 0 ? (
-          <div className="space-y-3">
-            {upcomingTopUps.slice(0, 5).map((topUp) => (
-              <div
-                key={topUp.id}
-                className="flex items-center justify-between p-3 rounded-lg bg-muted/50"
-              >
-                <div className="flex items-center gap-3">
-                  <div
-                    className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium ${
-                      topUp.type === "batch"
-                        ? "bg-primary/10 text-primary border border-primary/20"
-                        : "bg-accent/10 text-accent border border-accent/20"
-                    }`}
-                  >
-                    {topUp.type === "batch" ? (
-                      <Users className="h-3 w-3" />
-                    ) : (
-                      <User className="h-3 w-3" />
-                    )}
-                    {topUp.type === "batch" ? "Batch" : "Individual"}
-                  </div>
-                  <div>
-                    <p className="font-medium text-foreground">
-                      {topUp.type === "batch"
-                        ? topUp.ruleName
-                        : topUp.accountName}
-                    </p>
-                    <p className="text-xs text-muted-foreground">
-                      {topUp.type === "batch"
-                        ? `${topUp.eligibleCount} eligible accounts`
-                        : topUp.remarks}
-                    </p>
-                  </div>
-                </div>
-                <div className="text-right">
-                  <p className="font-semibold text-success">
-                    ${Number(topUp.amount).toFixed(2)}
-                  </p>
-                  <p className="text-xs text-muted-foreground">
-                    {new Date(topUp.scheduledDate).toLocaleDateString()}
-                    {topUp.scheduledTime && ` at ${topUp.scheduledTime}`}
-                  </p>
-                </div>
-              </div>
-            ))}
-          </div>
-        ) : (
-          <p className="text-muted-foreground text-sm">
-            No upcoming top-ups scheduled
-          </p>
-        )}
-      </div>
-
-      {/* Top-up History */}
+      {/* Top-up Tracking */}
       <Card>
         <CardHeader className="pb-3">
           <div className="flex items-center justify-between">
-            <div>
-              <CardTitle>Top-up History</CardTitle>
-              <CardDescription>Recent top-up operations</CardDescription>
+            <div className="flex items-center gap-3">
+              <Calendar className="h-5 w-5 text-accent" />
+              <div>
+                <CardTitle>Top-up Tracking</CardTitle>
+                <CardDescription>
+                  Monitor scheduled and completed top-ups
+                </CardDescription>
+              </div>
             </div>
             <Link to="/admin/topup">
               <Button variant="outline" size="sm">
@@ -299,11 +252,42 @@ export default function AdminDashboard() {
           </div>
         </CardHeader>
         <CardContent>
-          <DataTable
-            data={recentSchedules}
-            columns={scheduleColumns}
-            emptyMessage="No top-up history"
-          />
+          {/* Scheduled Count */}
+          <div className="rounded-lg bg-accent/10 p-4 mb-6">
+            <p className="text-4xl font-bold text-foreground">
+              {upcomingTopUps.length}
+            </p>
+            <p className="text-xs text-muted-foreground mt-1">
+              Scheduled top-ups
+            </p>
+          </div>
+
+          <Tabs defaultValue="batch" className="w-full">
+            <TabsList className="mb-4">
+              <TabsTrigger value="batch" className="gap-2">
+                <Users className="h-4 w-4" />
+                Batch
+              </TabsTrigger>
+              <TabsTrigger value="individual" className="gap-2">
+                <User className="h-4 w-4" />
+                Individual
+              </TabsTrigger>
+            </TabsList>
+            <TabsContent value="batch">
+              <DataTable
+                data={recentBatchSchedules}
+                columns={batchScheduleColumns}
+                emptyMessage="No batch top-up history"
+              />
+            </TabsContent>
+            <TabsContent value="individual">
+              <DataTable
+                data={recentIndividualSchedules}
+                columns={individualScheduleColumns}
+                emptyMessage="No individual top-up history"
+              />
+            </TabsContent>
+          </Tabs>
         </CardContent>
       </Card>
     </div>
