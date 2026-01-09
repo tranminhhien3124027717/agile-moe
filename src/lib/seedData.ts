@@ -528,7 +528,7 @@ export const seedDatabase = async () => {
         status: "pending" as const,
       },
 
-      // Tracy Tran - charges for 3 courses
+      // Tracy Tran - charges for 3 courses (demonstrating all payment statuses)
       {
         accountId: accountIds[3],
         courseId: courseIds[3], // Bachelor of Engineering
@@ -536,7 +536,7 @@ export const seedDatabase = async () => {
         amount: 650,
         amountPaid: 0,
         dueDate: formatDate(new Date(today.getFullYear(), today.getMonth(), 1)),
-        status: "pending" as const,
+        status: "pending" as const, // Scheduled - not yet due
       },
       {
         accountId: accountIds[3],
@@ -547,13 +547,23 @@ export const seedDatabase = async () => {
         dueDate: formatDate(
           new Date(today.getFullYear(), today.getMonth() - 1, 5)
         ),
-        status: "paid" as const,
+        status: "paid" as const, // Fully paid
         paidDate: formatDate(
           new Date(today.getFullYear(), today.getMonth() - 1, 4)
         ),
         paymentMethod: "account_balance",
       },
-
+      {
+        accountId: accountIds[3],
+        courseId: courseIds[2], // Professional Certificate in Data Analytics (quarterly)
+        courseName: courses[2].name,
+        amount: 1200,
+        amountPaid: 0,
+        dueDate: formatDate(
+          new Date(today.getFullYear(), today.getMonth() - 1, 15)
+        ),
+        status: "outstanding" as const, // Outstanding - overdue
+      },
       // Kyan Le - charges for 2 courses
       {
         accountId: accountIds[4],
