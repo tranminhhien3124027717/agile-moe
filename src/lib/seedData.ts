@@ -589,28 +589,19 @@ export const seedDatabase = async () => {
         paymentMethod: "credit_card",
       },
 
-      // Course 3: Short Course in Web Development (ENDED 2025) - all PAID → FULLY PAID
+      // Course 3: Short Course in Web Development (6 months, monthly billing = 6 charges)
+      // Total fee for course: 300/month × 1 payment = 300 total (short course, single payment)
+      // All PAID + totalCollected = totalFee → FULLY PAID
       {
         accountId: accountIds[3],
         courseId: courseIds[8], // Web Development (ended Dec 2025)
         courseName: courses[8].name,
         amount: 300,
         amountPaid: 300,
-        dueDate: formatDate(new Date(2025, 10, 1)), // Nov 2025
+        dueDate: formatDate(new Date(2025, 0, 15)), // Jan 2025 - single payment for short course
         status: "paid" as const,
-        paidDate: formatDate(new Date(2025, 9, 30)),
+        paidDate: formatDate(new Date(2025, 0, 14)),
         paymentMethod: "account_balance",
-      },
-      {
-        accountId: accountIds[3],
-        courseId: courseIds[8],
-        courseName: courses[8].name,
-        amount: 300,
-        amountPaid: 300,
-        dueDate: formatDate(new Date(2025, 11, 1)), // Dec 2025
-        status: "paid" as const,
-        paidDate: formatDate(new Date(2025, 10, 28)),
-        paymentMethod: "credit_card",
       },
       // Kyan Le - charges for 2 courses
       {
