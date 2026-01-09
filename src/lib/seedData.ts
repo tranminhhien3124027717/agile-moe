@@ -62,34 +62,41 @@ export const seedDatabase = async () => {
     // Step 1.5: Seed NRIC Registry (must be first for auto-fill to work)
     console.log("Creating NRIC registry...");
     const nricRecords = [
+      // Match with account holders that will be created
       {
-        nric: "S9107890E",
+        nric: "S9001234A",
         fullName: "Tan Wei Ming",
-        dateOfBirth: "1991-03-15",
+        dateOfBirth: "1998-03-15",
       },
       {
         nric: "S9205678B",
         fullName: "Lee Xin Yi",
-        dateOfBirth: "1992-07-22",
+        dateOfBirth: "2000-07-22",
       },
       {
         nric: "S8809012C",
         fullName: "Kumar Rajan",
-        dateOfBirth: "1988-11-08",
+        dateOfBirth: "1996-11-08",
       },
       {
         nric: "S9503456D",
-        fullName: "Wong Mei Ling",
-        dateOfBirth: "1995-05-20",
+        fullName: "Siti Nurhaliza",
+        dateOfBirth: "1999-05-18",
       },
       {
         nric: "S8712345A",
-        fullName: "Tan Ah Kow",
-        dateOfBirth: "1987-09-12",
+        fullName: "Chong Wei Lun",
+        dateOfBirth: "1997-12-03",
+      },
+      // Additional registry entries for testing
+      {
+        nric: "S9107890E",
+        fullName: "Wong Mei Ling",
+        dateOfBirth: "1991-03-15",
       },
       {
         nric: "S9601234F",
-        fullName: "Siti Nurhaliza",
+        fullName: "Tan Ah Kow",
         dateOfBirth: "1996-01-18",
       },
       {

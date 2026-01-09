@@ -1,5 +1,14 @@
 import { useState, useEffect } from "react";
-import { User, Mail, Phone, MapPin, Save, Pencil, X } from "lucide-react";
+import {
+  User,
+  Mail,
+  Phone,
+  MapPin,
+  Save,
+  Pencil,
+  X,
+  RefreshCw,
+} from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -8,6 +17,7 @@ import { Separator } from "@/components/ui/separator";
 import { StatusBadge } from "@/components/shared/StatusBadge";
 import { useUpdateAccountHolder } from "@/hooks/useAccountHolders";
 import { useCurrentUser } from "@/contexts/CurrentUserContext";
+import { nricRegistryService } from "@/lib/firestoreServices";
 import { toast } from "sonner";
 
 export default function Profile() {
@@ -65,6 +75,32 @@ export default function Profile() {
     setIsEditing(false);
   };
 
+  const handleUpdateProfile = async () => {
+    try {
+      // Fetch latest data from NRIC registry
+      const registryData = await nricRegistryService.getByNric(
+        currentUser.nric
+      );
+
+      if (registryData) {
+        // Update account holder with registry data
+        await updateAccountMutation.mutateAsync({
+          id: currentUser.id,
+          data: {
+            name: registryData.fullName,
+            dateOfBirth: registryData.dateOfBirth,
+          },
+        });
+        toast.success("Profile updated successfully from registry data");
+      } else {
+        toast.error("No updated data found in registry");
+      }
+    } catch (error) {
+      console.error("Error updating profile:", error);
+      toast.error("Failed to update profile");
+    }
+  };
+
   const dob = new Date(currentUser.dateOfBirth);
   const age = Math.floor(
     (Date.now() - dob.getTime()) / (365.25 * 24 * 60 * 60 * 1000)
@@ -99,18 +135,33 @@ export default function Profile() {
 
       {/* Read-only Information */}
       <div className="rounded-xl border border-border bg-card p-6 space-y-6">
-        <div className="flex items-center gap-3">
-          <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-muted">
-            <User className="h-5 w-5 text-muted-foreground" />
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-muted">
+              <User className="h-5 w-5 text-muted-foreground" />
+            </div>
+            <div>
+              <h3 className="font-semibold text-foreground">
+                Personal Information
+              </h3>
+              <p className="text-sm text-muted-foreground">
+                These details cannot be changed online
+              </p>
+            </div>
           </div>
-          <div>
-            <h3 className="font-semibold text-foreground">
-              Personal Information
-            </h3>
-            <p className="text-sm text-muted-foreground">
-              These details cannot be changed online
-            </p>
-          </div>
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={handleUpdateProfile}
+            disabled={updateAccountMutation.isPending}
+          >
+            <RefreshCw
+              className={`h-4 w-4 mr-2 ${
+                updateAccountMutation.isPending ? "animate-spin" : ""
+              }`}
+            />
+            Update Profile
+          </Button>
         </div>
 
         <Separator />
