@@ -158,9 +158,9 @@ export const seedDatabase = async () => {
     const accountHolders = [
       {
         nric: "S9001234A",
-        name: "Tan Wei Ming",
+        name: "Dave Dao",
         dateOfBirth: "1998-03-15",
-        email: "weiming.tan@email.com",
+        email: "dave.dao@email.com",
         phone: "+65 9123 4567",
         residentialAddress: "Blk 123 Ang Mo Kio Ave 3 #05-678",
         mailingAddress: "Blk 123 Ang Mo Kio Ave 3 #05-678",
@@ -172,9 +172,9 @@ export const seedDatabase = async () => {
       },
       {
         nric: "S9205678B",
-        name: "Lee Xin Yi",
+        name: "Eric Nguyen",
         dateOfBirth: "2000-07-22",
-        email: "xinyi.lee@email.com",
+        email: "eric.nguyen@email.com",
         phone: "+65 8234 5678",
         residentialAddress: "Blk 456 Bedok North St 1 #12-345",
         mailingAddress: "Blk 456 Bedok North St 1 #12-345",
@@ -186,23 +186,23 @@ export const seedDatabase = async () => {
       },
       {
         nric: "S8809012C",
-        name: "Kumar Rajan",
+        name: "Tim Nguyen",
         dateOfBirth: "1996-11-08",
-        email: "kumar.rajan@email.com",
+        email: "tim.nguyen@email.com",
         phone: "+65 9345 6789",
         residentialAddress: "Blk 789 Tampines St 81 #08-234",
         mailingAddress: "Blk 789 Tampines St 81 #08-234",
         balance: 8000,
         status: "active" as const,
-        inSchool: "not_in_school" as const, // Only not_in_school account
+        inSchool: "not_in_school" as const, // Only not_in_school account - no courses
         educationLevel: "tertiary" as const,
         continuingLearning: "inactive" as const, // Not currently learning
       },
       {
         nric: "S9503456D",
-        name: "Siti Nurhaliza",
+        name: "Tracy Tran",
         dateOfBirth: "1999-05-18",
-        email: "siti.nurhaliza@email.com",
+        email: "tracy.tran@email.com",
         phone: "+65 8456 7890",
         residentialAddress: "Blk 321 Jurong West St 65 #04-567",
         mailingAddress: "Blk 321 Jurong West St 65 #04-567",
@@ -214,9 +214,9 @@ export const seedDatabase = async () => {
       },
       {
         nric: "S9107890E",
-        name: "Chen Wei Lun",
+        name: "Kyan Le",
         dateOfBirth: "1997-12-30",
-        email: "weilun.chen@email.com",
+        email: "kyan.le@email.com",
         phone: "+65 9567 8901",
         residentialAddress: "Blk 654 Hougang Ave 8 #15-890",
         mailingAddress: "Blk 654 Hougang Ave 8 #15-890",
@@ -297,6 +297,65 @@ export const seedDatabase = async () => {
         modeOfTraining: "Full-time",
         registerBy: "2025-07-01",
       },
+      {
+        name: "Certificate in Digital Marketing",
+        provider: "Temasek Polytechnic",
+        billingCycle: "monthly" as const,
+        fee: 320,
+        description: "Master social media marketing, SEO, and content strategy",
+        status: "active" as const,
+        courseRunStart: "2025-03-01",
+        courseRunEnd: "2025-09-30",
+        intakeSize: 100,
+        mainLocation: "Temasek Polytechnic Campus",
+        modeOfTraining: "Part-time",
+        registerBy: "2025-02-15",
+      },
+      {
+        name: "Diploma in Cybersecurity",
+        provider: "Nanyang Polytechnic",
+        billingCycle: "monthly" as const,
+        fee: 480,
+        description:
+          "Learn network security, ethical hacking, and security operations",
+        status: "active" as const,
+        courseRunStart: "2025-04-15",
+        courseRunEnd: "2027-04-14",
+        intakeSize: 90,
+        mainLocation: "Nanyang Polytechnic Campus",
+        modeOfTraining: "Full-time",
+        registerBy: "2025-03-30",
+      },
+      {
+        name: "Advanced Certificate in AI & Machine Learning",
+        provider: "SkillsFuture Singapore",
+        billingCycle: "quarterly" as const,
+        fee: 1500,
+        description:
+          "Deep dive into artificial intelligence, neural networks, and ML algorithms",
+        status: "active" as const,
+        courseRunStart: "2025-07-01",
+        courseRunEnd: "2026-01-31",
+        intakeSize: 60,
+        mainLocation: "Online",
+        modeOfTraining: "Part-time Online",
+        registerBy: "2025-06-15",
+      },
+      {
+        name: "Diploma in Financial Services",
+        provider: "Republic Polytechnic",
+        billingCycle: "monthly" as const,
+        fee: 420,
+        description:
+          "Comprehensive program in banking, investments, and financial planning",
+        status: "active" as const,
+        courseRunStart: "2025-05-15",
+        courseRunEnd: "2027-05-14",
+        intakeSize: 110,
+        mainLocation: "Republic Polytechnic Campus",
+        modeOfTraining: "Full-time",
+        registerBy: "2025-04-30",
+      },
     ];
 
     const courseIds: string[] = [];
@@ -306,32 +365,76 @@ export const seedDatabase = async () => {
     }
     console.log(`✅ Created ${courseIds.length} courses`);
 
-    // Seed Enrollments
+    // Seed Enrollments (each in_school student has 2-3 courses)
     console.log("Creating enrollments...");
     const enrollments = [
+      // Dave Dao - 3 courses (IT focus)
       {
-        accountId: accountIds[0], // Tan Wei Ming - in_school
-        courseId: courseIds[0],
+        accountId: accountIds[0], // Dave Dao - in_school
+        courseId: courseIds[0], // Advanced Diploma in IT
         enrollmentDate: "2025-04-01",
         status: "active" as const,
       },
       {
-        accountId: accountIds[1], // Lee Xin Yi - in_school
-        courseId: courseIds[1],
+        accountId: accountIds[0],
+        courseId: courseIds[5], // Diploma in Cybersecurity
+        enrollmentDate: "2025-04-15",
+        status: "active" as const,
+      },
+      {
+        accountId: accountIds[0],
+        courseId: courseIds[6], // Advanced Certificate in AI & ML
+        enrollmentDate: "2025-07-01",
+        status: "active" as const,
+      },
+
+      // Eric Nguyen - 2 courses (Business focus)
+      {
+        accountId: accountIds[1], // Eric Nguyen - in_school
+        courseId: courseIds[1], // Diploma in Business Administration
         enrollmentDate: "2025-05-01",
         status: "active" as const,
       },
-      // Kumar Rajan (accountIds[2]) - NOT enrolled (not_in_school, no courses)
       {
-        accountId: accountIds[3], // Siti Nurhaliza - in_school
-        courseId: courseIds[3],
+        accountId: accountIds[1],
+        courseId: courseIds[4], // Certificate in Digital Marketing
+        enrollmentDate: "2025-03-01",
+        status: "active" as const,
+      },
+
+      // Tim Nguyen (accountIds[2]) - NOT enrolled (not_in_school, no courses)
+
+      // Tracy Tran - 3 courses (Engineering & Tech)
+      {
+        accountId: accountIds[3], // Tracy Tran - in_school
+        courseId: courseIds[3], // Bachelor of Engineering
         enrollmentDate: "2025-08-01",
         status: "active" as const,
       },
       {
-        accountId: accountIds[4], // Chen Wei Lun - in_school
-        courseId: courseIds[0],
+        accountId: accountIds[3],
+        courseId: courseIds[2], // Professional Certificate in Data Analytics
+        enrollmentDate: "2025-06-01",
+        status: "active" as const,
+      },
+      {
+        accountId: accountIds[3],
+        courseId: courseIds[0], // Advanced Diploma in IT
         enrollmentDate: "2025-04-01",
+        status: "active" as const,
+      },
+
+      // Kyan Le - 2 courses (Finance & Tech)
+      {
+        accountId: accountIds[4], // Kyan Le - in_school
+        courseId: courseIds[7], // Diploma in Financial Services
+        enrollmentDate: "2025-05-15",
+        status: "active" as const,
+      },
+      {
+        accountId: accountIds[4],
+        courseId: courseIds[2], // Professional Certificate in Data Analytics
+        enrollmentDate: "2025-06-01",
         status: "active" as const,
       },
     ];
@@ -343,13 +446,14 @@ export const seedDatabase = async () => {
     }
     console.log(`✅ Created ${enrollmentCount} enrollments`);
 
-    // Seed Course Charges
+    // Seed Course Charges (reflecting multiple courses per student)
     console.log("Creating course charges...");
     const today = new Date();
     const charges = [
+      // Dave Dao - charges for 3 courses
       {
         accountId: accountIds[0],
-        courseId: courseIds[0],
+        courseId: courseIds[0], // Advanced Diploma in IT
         courseName: courses[0].name,
         amount: 450,
         amountPaid: 450,
@@ -367,28 +471,30 @@ export const seedDatabase = async () => {
         courseId: courseIds[0],
         courseName: courses[0].name,
         amount: 450,
-        amountPaid: 450,
-        dueDate: formatDate(
-          new Date(today.getFullYear(), today.getMonth() - 1, 5)
-        ),
-        status: "paid" as const,
-        paidDate: formatDate(
-          new Date(today.getFullYear(), today.getMonth() - 1, 4)
-        ),
-        paymentMethod: "credit_card",
-      },
-      {
-        accountId: accountIds[0],
-        courseId: courseIds[0],
-        courseName: courses[0].name,
-        amount: 450,
         amountPaid: 0,
         dueDate: formatDate(new Date(today.getFullYear(), today.getMonth(), 5)),
         status: "pending" as const,
       },
       {
+        accountId: accountIds[0],
+        courseId: courseIds[5], // Diploma in Cybersecurity
+        courseName: courses[5].name,
+        amount: 480,
+        amountPaid: 480,
+        dueDate: formatDate(
+          new Date(today.getFullYear(), today.getMonth() - 1, 15)
+        ),
+        status: "paid" as const,
+        paidDate: formatDate(
+          new Date(today.getFullYear(), today.getMonth() - 1, 14)
+        ),
+        paymentMethod: "credit_card",
+      },
+
+      // Eric Nguyen - charges for 2 courses
+      {
         accountId: accountIds[1],
-        courseId: courseIds[1],
+        courseId: courseIds[1], // Diploma in Business Administration
         courseName: courses[1].name,
         amount: 380,
         amountPaid: 380,
@@ -413,8 +519,19 @@ export const seedDatabase = async () => {
         status: "pending" as const,
       },
       {
+        accountId: accountIds[1],
+        courseId: courseIds[4], // Certificate in Digital Marketing
+        courseName: courses[4].name,
+        amount: 320,
+        amountPaid: 0,
+        dueDate: formatDate(new Date(today.getFullYear(), today.getMonth(), 1)),
+        status: "pending" as const,
+      },
+
+      // Tracy Tran - charges for 3 courses
+      {
         accountId: accountIds[3],
-        courseId: courseIds[3],
+        courseId: courseIds[3], // Bachelor of Engineering
         courseName: courses[3].name,
         amount: 650,
         amountPaid: 0,
@@ -422,15 +539,47 @@ export const seedDatabase = async () => {
         status: "pending" as const,
       },
       {
-        accountId: accountIds[4],
-        courseId: courseIds[0],
+        accountId: accountIds[3],
+        courseId: courseIds[0], // Advanced Diploma in IT
         courseName: courses[0].name,
         amount: 450,
-        amountPaid: 0,
+        amountPaid: 450,
         dueDate: formatDate(
           new Date(today.getFullYear(), today.getMonth() - 1, 5)
         ),
+        status: "paid" as const,
+        paidDate: formatDate(
+          new Date(today.getFullYear(), today.getMonth() - 1, 4)
+        ),
+        paymentMethod: "account_balance",
+      },
+
+      // Kyan Le - charges for 2 courses
+      {
+        accountId: accountIds[4],
+        courseId: courseIds[7], // Diploma in Financial Services
+        courseName: courses[7].name,
+        amount: 420,
+        amountPaid: 0,
+        dueDate: formatDate(
+          new Date(today.getFullYear(), today.getMonth() - 1, 15)
+        ),
         status: "outstanding" as const,
+      },
+      {
+        accountId: accountIds[4],
+        courseId: courseIds[2], // Professional Certificate in Data Analytics (quarterly)
+        courseName: courses[2].name,
+        amount: 1200,
+        amountPaid: 1200,
+        dueDate: formatDate(
+          new Date(today.getFullYear(), today.getMonth() - 2, 1)
+        ),
+        status: "paid" as const,
+        paidDate: formatDate(
+          new Date(today.getFullYear(), today.getMonth() - 2, 28)
+        ),
+        paymentMethod: "account_balance",
       },
     ];
 
@@ -475,7 +624,7 @@ export const seedDatabase = async () => {
         status: "completed" as const,
         reference: "INIT-002",
       },
-      // Kumar Rajan (accountIds[2]) - not_in_school, no courses, but has transaction history
+      // Tim Nguyen (accountIds[2]) - not_in_school, no courses, but has transaction history
       {
         accountId: accountIds[2],
         type: "top_up" as const,
