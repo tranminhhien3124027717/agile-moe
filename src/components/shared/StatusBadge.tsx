@@ -67,7 +67,7 @@ const statusLabels: Record<Status, string> = {
   inactive: "Outstanding",
   pending: "Pending",
   closed: "Paid",
-  completed: "Fully Paid",
+  completed: "Completed",
   failed: "Outstanding",
   paid: "Paid",
   overdue: "Outstanding",

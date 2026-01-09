@@ -90,12 +90,13 @@ export default function AdminDashboard() {
       header: "Rule Name",
       render: (item: (typeof topUpSchedules)[0]) => (
         <div>
-          <p className="font-medium text-foreground">{item.ruleName}</p>
-          {item.eligibleCount && (
-            <p className="text-xs text-muted-foreground">
-              {item.eligibleCount} accounts
-            </p>
-          )}
+          <p className="font-medium text-foreground">
+            {item.ruleName || "No Rule Name"}
+          </p>
+          <p className="text-xs text-muted-foreground">
+            {item.eligibleCount ?? 0} account
+            {(item.eligibleCount ?? 0) !== 1 ? "s" : ""} affected
+          </p>
         </div>
       ),
     },
@@ -134,14 +135,9 @@ export default function AdminDashboard() {
   const individualScheduleColumns = [
     {
       key: "name",
-      header: "Name",
+      header: "Account Name",
       render: (item: (typeof topUpSchedules)[0]) => (
-        <div>
-          <p className="font-medium text-foreground">{item.accountName}</p>
-          {item.remarks && (
-            <p className="text-xs text-muted-foreground">{item.remarks}</p>
-          )}
-        </div>
+        <p className="font-medium text-foreground">{item.accountName}</p>
       ),
     },
     {

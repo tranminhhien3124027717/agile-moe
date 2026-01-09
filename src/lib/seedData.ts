@@ -578,23 +578,23 @@ export const seedDatabase = async () => {
     const accountNames = accountHolders.map((a) => a.name);
 
     const schedules = [
-      // Completed batch top-ups (executed rules)
+      // Completed batch top-ups (rule-based, applies to multiple accounts)
       {
         type: "batch" as const,
         ruleId: ruleIds[0],
-        ruleName: ruleNames[0], // Tertiary Education Students
+        ruleName: ruleNames[0], // "Tertiary Education Students"
         amount: 2000,
         scheduledDate: "2025-01-15",
         executedDate: "2025-01-15",
         status: "completed" as const,
-        eligibleCount: 2,
-        processedCount: 2,
+        eligibleCount: 2, // Number of accounts that matched this rule
+        processedCount: 2, // Successfully processed
         remarks: "Monthly batch top-up for tertiary students",
       },
       {
         type: "batch" as const,
         ruleId: ruleIds[1],
-        ruleName: ruleNames[1], // Post-Secondary Students
+        ruleName: ruleNames[1], // "Post-Secondary Students"
         amount: 500,
         scheduledDate: "2025-02-01",
         executedDate: "2025-02-01",
@@ -606,7 +606,7 @@ export const seedDatabase = async () => {
       {
         type: "batch" as const,
         ruleId: ruleIds[2],
-        ruleName: ruleNames[2], // Continuing Learners
+        ruleName: ruleNames[2], // "Continuing Learners"
         amount: 1500,
         scheduledDate: "2025-03-01",
         executedDate: "2025-03-01",
@@ -615,60 +615,56 @@ export const seedDatabase = async () => {
         processedCount: 1,
         remarks: "Skill upgrade grant for continuing learners",
       },
-      // Individual top-ups (completed)
+      // Individual top-ups (specific account, one-time top-up)
       {
         type: "individual" as const,
         accountId: accountIds[0],
-        accountName: accountNames[0],
+        accountName: accountNames[0], // Student name
         amount: 1000,
         scheduledDate: "2025-04-10",
         executedDate: "2025-04-10",
         status: "completed" as const,
-        eligibleCount: 1,
-        processedCount: 1,
-        remarks: "Emergency financial assistance",
       },
       {
         type: "individual" as const,
         accountId: accountIds[3],
-        accountName: accountNames[3],
+        accountName: accountNames[3], // Student name
         amount: 500,
         scheduledDate: "2025-05-15",
         executedDate: "2025-05-15",
         status: "completed" as const,
-        eligibleCount: 1,
-        processedCount: 1,
-        remarks: "Special circumstance top-up",
       },
-      // Scheduled (upcoming)
+      // Scheduled batch top-ups (upcoming)
       {
         type: "batch" as const,
         ruleId: ruleIds[0],
-        ruleName: ruleNames[0], // Tertiary Education Students
+        ruleName: ruleNames[0], // "Tertiary Education Students"
         amount: 2000,
         scheduledDate: "2026-02-01",
         status: "scheduled" as const,
+        eligibleCount: 0, // Will be calculated when executed
         remarks: "Scheduled batch top-up for February 2026",
       },
       {
         type: "batch" as const,
         ruleId: ruleIds[3],
-        ruleName: ruleNames[3], // Low Balance Support
+        ruleName: ruleNames[3], // "Low Balance Support"
         amount: 1000,
         scheduledDate: "2026-01-20",
         status: "scheduled" as const,
+        eligibleCount: 0,
         remarks: "Emergency fund distribution",
       },
+      // Scheduled individual top-up
       {
         type: "individual" as const,
         accountId: accountIds[1],
-        accountName: accountNames[1],
+        accountName: accountNames[1], // Student name
         amount: 800,
         scheduledDate: "2026-01-25",
         status: "scheduled" as const,
-        remarks: "Approved exceptional case top-up",
       },
-      // Canceled
+      // Canceled batch
       {
         type: "batch" as const,
         ruleId: ruleIds[1],
@@ -676,16 +672,17 @@ export const seedDatabase = async () => {
         amount: 500,
         scheduledDate: "2025-12-15",
         status: "canceled" as const,
+        eligibleCount: 0,
         remarks: "Canceled due to policy review",
       },
+      // Canceled individual
       {
         type: "individual" as const,
         accountId: accountIds[2],
-        accountName: accountNames[2],
+        accountName: accountNames[2], // Student name
         amount: 600,
         scheduledDate: "2025-11-30",
         status: "canceled" as const,
-        remarks: "Student withdrawn request",
       },
     ];
 

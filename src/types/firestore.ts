@@ -123,12 +123,15 @@ export interface TopUpSchedule {
   executedDate?: string;
   status: TopUpScheduleStatus;
   amount: number;
-  ruleId?: string;
-  ruleName?: string;
-  eligibleCount?: number;
-  processedCount?: number;
-  accountId?: string;
-  accountName?: string;
+  // Batch top-up fields (required when type = "batch")
+  ruleId?: string; // Required for batch
+  ruleName?: string; // Display name of rule for batch
+  eligibleCount?: number; // Number of accounts affected by rule
+  processedCount?: number; // Number of accounts successfully processed
+  // Individual top-up fields (required when type = "individual")
+  accountId?: string; // Required for individual
+  accountName?: string; // Display name of account for individual
+  // Common optional fields
   remarks?: string;
   createdAt: string;
   updatedAt: string;
