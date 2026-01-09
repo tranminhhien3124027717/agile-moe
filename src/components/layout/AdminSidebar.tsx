@@ -10,6 +10,12 @@ import {
   Database,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 
 const menuItems = [
   {
@@ -27,16 +33,19 @@ const menuItems = [
     label: "Top-up Management",
     icon: Wallet,
     path: "/admin/topup",
+    inDevelopment: true,
   },
   {
     label: "Course Management",
     icon: BookOpen,
     path: "/admin/courses",
+    inDevelopment: true,
   },
   {
     label: "Settings",
     icon: Settings,
     path: "/admin/settings",
+    inDevelopment: true,
   },
   {
     label: "Seed Demo Data",
@@ -70,27 +79,51 @@ export function AdminSidebar() {
       </div>
 
       <nav className="flex-1 p-4 space-y-1">
-        {menuItems.map((item) => {
-          const Icon = item.icon;
-          const active = isActive(item.path, item.exact);
+        <TooltipProvider>
+          {menuItems.map((item) => {
+            const Icon = item.icon;
+            const active = isActive(item.path, item.exact);
 
-          return (
-            <Link
-              key={item.path}
-              to={item.path}
-              className={cn(
-                "flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-smooth",
-                active
-                  ? "bg-primary text-primary-foreground shadow-sm"
-                  : "text-muted-foreground hover:bg-secondary hover:text-foreground"
-              )}
-            >
-              <Icon className="h-4 w-4" />
-              <span className="flex-1">{item.label}</span>
-              {active && <ChevronRight className="h-4 w-4" />}
-            </Link>
-          );
-        })}
+            const linkContent = (
+              <Link
+                key={item.path}
+                to={item.path}
+                className={cn(
+                  "flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-smooth",
+                  active
+                    ? "bg-primary text-primary-foreground shadow-sm"
+                    : item.inDevelopment
+                    ? "text-muted-foreground/60 hover:bg-secondary/50 hover:text-muted-foreground"
+                    : "text-muted-foreground hover:bg-secondary hover:text-foreground"
+                )}
+              >
+                <Icon className="h-4 w-4" />
+                <span className="flex-1">{item.label}</span>
+                {item.inDevelopment && !active && (
+                  <span className="text-[10px] px-1.5 py-0.5 rounded bg-muted text-muted-foreground border border-border">
+                    DEV
+                  </span>
+                )}
+                {active && <ChevronRight className="h-4 w-4" />}
+              </Link>
+            );
+
+            if (item.inDevelopment) {
+              return (
+                <Tooltip key={item.path}>
+                  <TooltipTrigger asChild>{linkContent}</TooltipTrigger>
+                  <TooltipContent side="right">
+                    <p className="text-xs">
+                      🚧 Under Development - Not included in demo
+                    </p>
+                  </TooltipContent>
+                </Tooltip>
+              );
+            }
+
+            return linkContent;
+          })}
+        </TooltipProvider>
       </nav>
 
       <div className="p-4 border-t border-border">

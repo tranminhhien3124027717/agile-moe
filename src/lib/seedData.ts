@@ -194,9 +194,9 @@ export const seedDatabase = async () => {
         mailingAddress: "Blk 789 Tampines St 81 #08-234",
         balance: 8000,
         status: "active" as const,
-        inSchool: "not_in_school" as const,
+        inSchool: "not_in_school" as const, // Only not_in_school account
         educationLevel: "tertiary" as const,
-        continuingLearning: "active" as const,
+        continuingLearning: "inactive" as const, // Not currently learning
       },
       {
         nric: "S9503456D",
@@ -222,7 +222,7 @@ export const seedDatabase = async () => {
         mailingAddress: "Blk 654 Hougang Ave 8 #15-890",
         balance: 6500,
         status: "active" as const,
-        inSchool: "not_in_school" as const,
+        inSchool: "in_school" as const,
         educationLevel: "postgraduate" as const,
         continuingLearning: "active" as const,
       },
@@ -310,31 +310,26 @@ export const seedDatabase = async () => {
     console.log("Creating enrollments...");
     const enrollments = [
       {
-        accountId: accountIds[0],
+        accountId: accountIds[0], // Tan Wei Ming - in_school
         courseId: courseIds[0],
         enrollmentDate: "2025-04-01",
         status: "active" as const,
       },
       {
-        accountId: accountIds[1],
+        accountId: accountIds[1], // Lee Xin Yi - in_school
         courseId: courseIds[1],
         enrollmentDate: "2025-05-01",
         status: "active" as const,
       },
+      // Kumar Rajan (accountIds[2]) - NOT enrolled (not_in_school, no courses)
       {
-        accountId: accountIds[2],
-        courseId: courseIds[2],
-        enrollmentDate: "2025-06-01",
-        status: "active" as const,
-      },
-      {
-        accountId: accountIds[3],
+        accountId: accountIds[3], // Siti Nurhaliza - in_school
         courseId: courseIds[3],
         enrollmentDate: "2025-08-01",
         status: "active" as const,
       },
       {
-        accountId: accountIds[4],
+        accountId: accountIds[4], // Chen Wei Lun - in_school
         courseId: courseIds[0],
         enrollmentDate: "2025-04-01",
         status: "active" as const,
@@ -480,6 +475,7 @@ export const seedDatabase = async () => {
         status: "completed" as const,
         reference: "INIT-002",
       },
+      // Kumar Rajan (accountIds[2]) - not_in_school, no courses, but has transaction history
       {
         accountId: accountIds[2],
         type: "top_up" as const,
@@ -492,9 +488,9 @@ export const seedDatabase = async () => {
         accountId: accountIds[2],
         type: "top_up" as const,
         amount: 3000,
-        description: "Government subsidy - Continuing education",
+        description: "Government subsidy - Past education support",
         status: "completed" as const,
-        reference: "GOV-2025-002",
+        reference: "GOV-2024-002",
       },
       {
         accountId: accountIds[3],
@@ -587,8 +583,8 @@ export const seedDatabase = async () => {
         scheduledDate: "2025-01-15",
         executedDate: "2025-01-15",
         status: "completed" as const,
-        eligibleCount: 2, // Number of accounts that matched this rule
-        processedCount: 2, // Successfully processed
+        eligibleCount: 3, // Number of accounts that matched this rule
+        processedCount: 3, // Successfully processed
         remarks: "Monthly batch top-up for tertiary students",
       },
       {
@@ -599,8 +595,8 @@ export const seedDatabase = async () => {
         scheduledDate: "2025-02-01",
         executedDate: "2025-02-01",
         status: "completed" as const,
-        eligibleCount: 1,
-        processedCount: 1,
+        eligibleCount: 2,
+        processedCount: 2,
         remarks: "Quarterly support for post-secondary students",
       },
       {
@@ -611,8 +607,8 @@ export const seedDatabase = async () => {
         scheduledDate: "2025-03-01",
         executedDate: "2025-03-01",
         status: "completed" as const,
-        eligibleCount: 1,
-        processedCount: 1,
+        eligibleCount: 2,
+        processedCount: 2,
         remarks: "Skill upgrade grant for continuing learners",
       },
       // Individual top-ups (specific account, one-time top-up)
@@ -642,7 +638,7 @@ export const seedDatabase = async () => {
         amount: 2000,
         scheduledDate: "2026-02-01",
         status: "scheduled" as const,
-        eligibleCount: 0, // Will be calculated when executed
+        eligibleCount: 4, // Will be calculated when executed
         remarks: "Scheduled batch top-up for February 2026",
       },
       {
@@ -652,7 +648,7 @@ export const seedDatabase = async () => {
         amount: 1000,
         scheduledDate: "2026-01-20",
         status: "scheduled" as const,
-        eligibleCount: 0,
+        eligibleCount: 3,
         remarks: "Emergency fund distribution",
       },
       // Scheduled individual top-up
@@ -664,7 +660,7 @@ export const seedDatabase = async () => {
         scheduledDate: "2026-01-25",
         status: "scheduled" as const,
       },
-      // Canceled batch
+      // Canceled batch - No accounts affected since it was canceled before execution
       {
         type: "batch" as const,
         ruleId: ruleIds[1],
@@ -672,7 +668,7 @@ export const seedDatabase = async () => {
         amount: 500,
         scheduledDate: "2025-12-15",
         status: "canceled" as const,
-        eligibleCount: 0,
+        eligibleCount: 0, // No accounts affected - canceled before processing
         remarks: "Canceled due to policy review",
       },
       // Canceled individual
