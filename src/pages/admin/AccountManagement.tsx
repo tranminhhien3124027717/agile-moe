@@ -440,13 +440,6 @@ export default function AccountManagement() {
                   age--;
                 }
 
-                console.log("AccountManagement Age Calculation:", {
-                  accountId: account.id,
-                  dateOfBirth: account.dateOfBirth,
-                  birthDate: birthDate.toString(),
-                  age,
-                });
-
                 // Education level labels
                 const educationLevelLabels: Record<string, string> = {
                   primary: "Primary",
