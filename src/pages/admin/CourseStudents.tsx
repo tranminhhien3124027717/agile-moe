@@ -376,7 +376,11 @@ export default function CourseStudents() {
                   <TableCell className="text-muted-foreground">
                     {new Date(
                       item.enrollment.enrollmentDate
-                    ).toLocaleDateString()}
+                    ).toLocaleDateString("en-GB", {
+                      day: "2-digit",
+                      month: "2-digit",
+                      year: "numeric",
+                    })}
                   </TableCell>
                   <TableCell>
                     <StatusBadge status={item.enrollment.status} />

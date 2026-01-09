@@ -114,7 +114,13 @@ export default function AdminDashboard() {
       header: "Scheduled",
       render: (item: (typeof topUpSchedules)[0]) => (
         <div className="text-muted-foreground text-sm">
-          <p>{new Date(item.scheduledDate).toLocaleDateString()}</p>
+          <p>
+            {new Date(item.scheduledDate).toLocaleDateString("en-GB", {
+              day: "2-digit",
+              month: "2-digit",
+              year: "numeric",
+            })}
+          </p>
           {item.scheduledTime && (
             <p className="text-xs">{item.scheduledTime}</p>
           )}
@@ -154,7 +160,13 @@ export default function AdminDashboard() {
       header: "Scheduled",
       render: (item: (typeof topUpSchedules)[0]) => (
         <div className="text-muted-foreground text-sm">
-          <p>{new Date(item.scheduledDate).toLocaleDateString()}</p>
+          <p>
+            {new Date(item.scheduledDate).toLocaleDateString("en-GB", {
+              day: "2-digit",
+              month: "2-digit",
+              year: "numeric",
+            })}
+          </p>
           {item.scheduledTime && (
             <p className="text-xs">{item.scheduledTime}</p>
           )}

@@ -78,7 +78,11 @@ export default function AccountBalance() {
       header: "Date",
       render: (item: Transaction & { balanceAfter: number }) => (
         <span className="text-foreground">
-          {new Date(item.createdAt).toLocaleDateString()}
+          {new Date(item.createdAt).toLocaleDateString("en-GB", {
+            day: "2-digit",
+            month: "2-digit",
+            year: "numeric",
+          })}
         </span>
       ),
     },

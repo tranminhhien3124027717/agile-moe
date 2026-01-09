@@ -80,7 +80,11 @@ export default function FeeProcessing() {
       header: "Due Date",
       render: (item: (typeof courseCharges)[0]) => (
         <span className="text-muted-foreground">
-          {new Date(item.dueDate).toLocaleDateString()}
+          {new Date(item.dueDate).toLocaleDateString("en-GB", {
+            day: "2-digit",
+            month: "2-digit",
+            year: "numeric",
+          })}
         </span>
       ),
     },

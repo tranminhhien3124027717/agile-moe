@@ -65,7 +65,7 @@ export default function CourseFees() {
     (c) => c.accountId === currentUser?.id
   );
   const pendingCharges = userCharges.filter(
-    (c) => c.status === "pending" || c.status === "overdue"
+    (c) => c.status === "pending" || c.status === "outstanding"
   );
   const paidCharges = userCharges.filter((c) => c.status === "paid");
 
@@ -604,7 +604,14 @@ export default function CourseFees() {
                     Due Date
                   </span>
                   <span>
-                    {new Date(selectedCharge.dueDate).toLocaleDateString()}
+                    {new Date(selectedCharge.dueDate).toLocaleDateString(
+                      "en-GB",
+                      {
+                        day: "2-digit",
+                        month: "2-digit",
+                        year: "numeric",
+                      }
+                    )}
                   </span>
                 </div>
               </div>

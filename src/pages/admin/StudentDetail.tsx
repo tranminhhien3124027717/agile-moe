@@ -435,7 +435,11 @@ export default function StudentDetail() {
       header: "Due Date",
       render: (item: (typeof studentCharges)[0]) => (
         <span className="text-muted-foreground">
-          {new Date(item.dueDate).toLocaleDateString()}
+          {new Date(item.dueDate).toLocaleDateString("en-GB", {
+            day: "2-digit",
+            month: "2-digit",
+            year: "numeric",
+          })}
         </span>
       ),
     },
@@ -463,7 +467,11 @@ export default function StudentDetail() {
       header: "Due Date",
       render: (item: (typeof studentCharges)[0]) => (
         <span className="text-muted-foreground">
-          {new Date(item.dueDate).toLocaleDateString()}
+          {new Date(item.dueDate).toLocaleDateString("en-GB", {
+            day: "2-digit",
+            month: "2-digit",
+            year: "numeric",
+          })}
         </span>
       ),
     },
@@ -786,8 +794,12 @@ export default function StudentDetail() {
               <div className="flex items-center gap-2">
                 <Calendar className="h-4 w-4 text-muted-foreground" />
                 <p className="font-medium text-foreground">
-                  {new Date(account.dateOfBirth).toLocaleDateString()} ({age}{" "}
-                  years old)
+                  {new Date(account.dateOfBirth).toLocaleDateString("en-GB", {
+                    day: "2-digit",
+                    month: "2-digit",
+                    year: "numeric",
+                  })}{" "}
+                  ({age} years old)
                 </p>
               </div>
             </div>
@@ -848,7 +860,11 @@ export default function StudentDetail() {
                 Account Created
               </p>
               <p className="font-medium text-foreground">
-                {new Date(account.createdAt).toLocaleDateString()}
+                {new Date(account.createdAt).toLocaleDateString("en-GB", {
+                  day: "2-digit",
+                  month: "2-digit",
+                  year: "numeric",
+                })}
               </p>
             </div>
           </div>
