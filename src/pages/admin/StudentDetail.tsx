@@ -372,6 +372,15 @@ export default function StudentDetail() {
       key: "nextPayment",
       header: "Next Payment",
       render: (item: (typeof enrolledCourses)[0]) => {
+        // No next payment if fully paid
+        if (item.paymentStatus === "fully_paid") {
+          return (
+            <span className="text-sm text-muted-foreground">
+              No payment due
+            </span>
+          );
+        }
+
         const daysUntil = Math.ceil(
           (item.nextPaymentDate.getTime() - new Date().getTime()) /
             (1000 * 60 * 60 * 24)
