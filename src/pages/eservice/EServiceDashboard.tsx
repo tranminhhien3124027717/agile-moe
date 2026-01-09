@@ -86,26 +86,36 @@ export default function EServiceDashboard() {
         .reduce((sum, c) => sum + Number(c.amount), 0);
 
       // Determine payment status based on charge statuses and due dates
+      // Logic:
+      // - scheduled: Current period paid, waiting for next period (no unpaid charges, course ongoing)
+      // - outstanding: Current period unpaid (has pending or outstanding charges)
+      // - fully_paid: All charges paid and course ended (no future charges)
+
       const today = new Date();
-      const hasOutstanding = userCharges.some(
-        (c) => c.status === "outstanding"
+      const hasUnpaid = userCharges.some(
+        (c) => c.status === "outstanding" || c.status === "pending"
       );
-      const hasPending = userCharges.some((c) => c.status === "pending");
       const allPaid =
         userCharges.length > 0 && userCharges.every((c) => c.status === "paid");
+
+      // Check if course has ended
+      const courseEndDate = course.courseRunEnd
+        ? new Date(course.courseRunEnd)
+        : null;
+      const courseEnded = courseEndDate && courseEndDate < today;
 
       let paymentStatus: "scheduled" | "outstanding" | "fully_paid" =
         "scheduled";
 
-      if (hasOutstanding) {
-        // If any charge is outstanding (overdue), show outstanding
+      if (hasUnpaid) {
+        // Has unpaid charges (pending or outstanding) → Outstanding
         paymentStatus = "outstanding";
-      } else if (hasPending) {
-        // If has pending charges (not yet due), show scheduled
-        paymentStatus = "scheduled";
-      } else if (allPaid) {
-        // If all charges are paid, show fully paid
+      } else if (allPaid && courseEnded) {
+        // All paid AND course has ended → Fully Paid (no more charges)
         paymentStatus = "fully_paid";
+      } else if (allPaid) {
+        // All current charges paid, course ongoing → Scheduled (waiting for next period)
+        paymentStatus = "scheduled";
       }
       // If no charges yet, default to "scheduled" (awaiting first charge)
 

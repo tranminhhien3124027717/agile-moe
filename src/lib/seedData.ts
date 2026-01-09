@@ -356,6 +356,21 @@ export const seedDatabase = async () => {
         modeOfTraining: "Full-time",
         registerBy: "2025-04-30",
       },
+      {
+        name: "Short Course in Web Development",
+        provider: "SkillsFuture Singapore",
+        billingCycle: "monthly" as const,
+        fee: 300,
+        description:
+          "6-month intensive web development bootcamp covering HTML, CSS, JavaScript, and React",
+        status: "active" as const,
+        courseRunStart: "2025-01-01",
+        courseRunEnd: "2025-12-31", // Course ended in 2025
+        intakeSize: 50,
+        mainLocation: "Online",
+        modeOfTraining: "Part-time Online",
+        registerBy: "2024-12-15",
+      },
     ];
 
     const courseIds: string[] = [];
@@ -404,24 +419,24 @@ export const seedDatabase = async () => {
 
       // Tim Nguyen (accountIds[2]) - NOT enrolled (not_in_school, no courses)
 
-      // Tracy Tran - 3 courses (Engineering & Tech)
+      // Tracy Tran - 3 courses (demonstrating all payment statuses)
       {
         accountId: accountIds[3], // Tracy Tran - in_school
-        courseId: courseIds[3], // Bachelor of Engineering
+        courseId: courseIds[3], // Bachelor of Engineering (ongoing, has unpaid)
         enrollmentDate: "2025-08-01",
         status: "active" as const,
       },
       {
         accountId: accountIds[3],
-        courseId: courseIds[2], // Professional Certificate in Data Analytics
-        enrollmentDate: "2025-06-01",
+        courseId: courseIds[0], // Advanced Diploma in IT (ongoing, all paid)
+        enrollmentDate: "2025-04-01",
         status: "active" as const,
       },
       {
         accountId: accountIds[3],
-        courseId: courseIds[0], // Advanced Diploma in IT
-        enrollmentDate: "2025-04-01",
-        status: "active" as const,
+        courseId: courseIds[8], // Short Course in Web Development (ended 2025, all paid)
+        enrollmentDate: "2025-01-01",
+        status: "completed" as const,
       },
 
       // Kyan Le - 2 courses (Finance & Tech)
@@ -528,41 +543,74 @@ export const seedDatabase = async () => {
         status: "pending" as const,
       },
 
-      // Tracy Tran - charges for 3 courses (demonstrating all payment statuses)
+      // Tracy Tran - charges for 3 courses (demonstrating all 3 payment statuses)
+      // Course 1: Bachelor of Engineering (ongoing) - has UNPAID charge → OUTSTANDING
       {
         accountId: accountIds[3],
-        courseId: courseIds[3], // Bachelor of Engineering
+        courseId: courseIds[3], // Bachelor of Engineering (ongoing until 2029)
         courseName: courses[3].name,
         amount: 650,
         amountPaid: 0,
-        dueDate: formatDate(new Date(today.getFullYear(), today.getMonth(), 1)),
-        status: "pending" as const, // Scheduled - not yet due
+        dueDate: formatDate(
+          new Date(today.getFullYear(), today.getMonth() - 1, 1)
+        ),
+        status: "outstanding" as const, // Unpaid and overdue → Outstanding
+      },
+
+      // Course 2: Advanced Diploma in IT (ongoing) - all PAID → SCHEDULED (waiting for next period)
+      {
+        accountId: accountIds[3],
+        courseId: courseIds[0], // Advanced Diploma in IT (ongoing until 2027)
+        courseName: courses[0].name,
+        amount: 450,
+        amountPaid: 450,
+        dueDate: formatDate(
+          new Date(today.getFullYear(), today.getMonth() - 2, 5)
+        ),
+        status: "paid" as const,
+        paidDate: formatDate(
+          new Date(today.getFullYear(), today.getMonth() - 2, 4)
+        ),
+        paymentMethod: "account_balance",
       },
       {
         accountId: accountIds[3],
-        courseId: courseIds[0], // Advanced Diploma in IT
+        courseId: courseIds[0],
         courseName: courses[0].name,
         amount: 450,
         amountPaid: 450,
         dueDate: formatDate(
           new Date(today.getFullYear(), today.getMonth() - 1, 5)
         ),
-        status: "paid" as const, // Fully paid
+        status: "paid" as const,
         paidDate: formatDate(
           new Date(today.getFullYear(), today.getMonth() - 1, 4)
         ),
+        paymentMethod: "credit_card",
+      },
+
+      // Course 3: Short Course in Web Development (ENDED 2025) - all PAID → FULLY PAID
+      {
+        accountId: accountIds[3],
+        courseId: courseIds[8], // Web Development (ended Dec 2025)
+        courseName: courses[8].name,
+        amount: 300,
+        amountPaid: 300,
+        dueDate: formatDate(new Date(2025, 10, 1)), // Nov 2025
+        status: "paid" as const,
+        paidDate: formatDate(new Date(2025, 9, 30)),
         paymentMethod: "account_balance",
       },
       {
         accountId: accountIds[3],
-        courseId: courseIds[2], // Professional Certificate in Data Analytics (quarterly)
-        courseName: courses[2].name,
-        amount: 1200,
-        amountPaid: 0,
-        dueDate: formatDate(
-          new Date(today.getFullYear(), today.getMonth() - 1, 15)
-        ),
-        status: "outstanding" as const, // Outstanding - overdue
+        courseId: courseIds[8],
+        courseName: courses[8].name,
+        amount: 300,
+        amountPaid: 300,
+        dueDate: formatDate(new Date(2025, 11, 1)), // Dec 2025
+        status: "paid" as const,
+        paidDate: formatDate(new Date(2025, 10, 28)),
+        paymentMethod: "credit_card",
       },
       // Kyan Le - charges for 2 courses
       {
