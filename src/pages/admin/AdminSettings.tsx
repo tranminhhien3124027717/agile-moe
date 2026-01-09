@@ -1,14 +1,14 @@
-import { Settings, Bell, Shield, Database, Clock } from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Switch } from '@/components/ui/switch';
-import { Separator } from '@/components/ui/separator';
-import { toast } from 'sonner';
+import { Settings, Bell, Shield, Database, Clock } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Switch } from "@/components/ui/switch";
+import { Separator } from "@/components/ui/separator";
+import { toast } from "sonner";
 
 export default function AdminSettings() {
   const handleSave = () => {
-    toast.success('Settings saved successfully');
+    toast.success("Settings saved successfully");
   };
 
   return (
@@ -29,12 +29,14 @@ export default function AdminSettings() {
           </div>
           <div>
             <h2 className="font-semibold text-foreground">Account Lifecycle</h2>
-            <p className="text-sm text-muted-foreground">Automatic activation and closure settings</p>
+            <p className="text-sm text-muted-foreground">
+              Automatic activation and closure settings
+            </p>
           </div>
         </div>
-        
+
         <Separator />
-        
+
         <div className="grid gap-6">
           <div className="flex items-center justify-between">
             <div className="space-y-0.5">
@@ -45,7 +47,7 @@ export default function AdminSettings() {
             </div>
             <Switch defaultChecked />
           </div>
-          
+
           <div className="flex items-center justify-between">
             <div className="space-y-0.5">
               <Label>Auto-close at age 30</Label>
@@ -55,15 +57,27 @@ export default function AdminSettings() {
             </div>
             <Switch defaultChecked />
           </div>
-          
+
           <div className="grid gap-2">
-            <Label htmlFor="activationDays">Days before birthday to activate</Label>
-            <Input id="activationDays" type="number" defaultValue="0" className="max-w-[200px]" />
+            <Label htmlFor="activationDays">
+              Days before birthday to activate
+            </Label>
+            <Input
+              id="activationDays"
+              type="number"
+              defaultValue="0"
+              className="max-w-[200px]"
+            />
           </div>
-          
+
           <div className="grid gap-2">
             <Label htmlFor="closureDays">Days after birthday to close</Label>
-            <Input id="closureDays" type="number" defaultValue="30" className="max-w-[200px]" />
+            <Input
+              id="closureDays"
+              type="number"
+              defaultValue="30"
+              className="max-w-[200px]"
+            />
           </div>
         </div>
       </div>
@@ -76,12 +90,14 @@ export default function AdminSettings() {
           </div>
           <div>
             <h2 className="font-semibold text-foreground">Notifications</h2>
-            <p className="text-sm text-muted-foreground">Email and SMS notification settings</p>
+            <p className="text-sm text-muted-foreground">
+              Email and SMS notification settings
+            </p>
           </div>
         </div>
-        
+
         <Separator />
-        
+
         <div className="grid gap-6">
           <div className="flex items-center justify-between">
             <div className="space-y-0.5">
@@ -92,17 +108,17 @@ export default function AdminSettings() {
             </div>
             <Switch defaultChecked />
           </div>
-          
+
           <div className="flex items-center justify-between">
             <div className="space-y-0.5">
               <Label>Payment reminders</Label>
               <p className="text-xs text-muted-foreground">
-                Send reminders for pending and overdue payments
+                Send reminders for pending and outstanding payments
               </p>
             </div>
             <Switch defaultChecked />
           </div>
-          
+
           <div className="flex items-center justify-between">
             <div className="space-y-0.5">
               <Label>Balance alerts</Label>
@@ -112,10 +128,17 @@ export default function AdminSettings() {
             </div>
             <Switch defaultChecked />
           </div>
-          
+
           <div className="grid gap-2">
-            <Label htmlFor="lowBalanceThreshold">Low balance threshold ($)</Label>
-            <Input id="lowBalanceThreshold" type="number" defaultValue="100" className="max-w-[200px]" />
+            <Label htmlFor="lowBalanceThreshold">
+              Low balance threshold ($)
+            </Label>
+            <Input
+              id="lowBalanceThreshold"
+              type="number"
+              defaultValue="100"
+              className="max-w-[200px]"
+            />
           </div>
         </div>
       </div>
@@ -128,12 +151,14 @@ export default function AdminSettings() {
           </div>
           <div>
             <h2 className="font-semibold text-foreground">Security</h2>
-            <p className="text-sm text-muted-foreground">Access control and audit settings</p>
+            <p className="text-sm text-muted-foreground">
+              Access control and audit settings
+            </p>
           </div>
         </div>
-        
+
         <Separator />
-        
+
         <div className="grid gap-6">
           <div className="flex items-center justify-between">
             <div className="space-y-0.5">
@@ -144,7 +169,7 @@ export default function AdminSettings() {
             </div>
             <Switch defaultChecked />
           </div>
-          
+
           <div className="flex items-center justify-between">
             <div className="space-y-0.5">
               <Label>Audit logging</Label>
@@ -154,10 +179,15 @@ export default function AdminSettings() {
             </div>
             <Switch defaultChecked />
           </div>
-          
+
           <div className="grid gap-2">
             <Label htmlFor="sessionTimeout">Session timeout (minutes)</Label>
-            <Input id="sessionTimeout" type="number" defaultValue="30" className="max-w-[200px]" />
+            <Input
+              id="sessionTimeout"
+              type="number"
+              defaultValue="30"
+              className="max-w-[200px]"
+            />
           </div>
         </div>
       </div>

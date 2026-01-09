@@ -57,7 +57,7 @@ export default function AdminDashboard() {
     .reduce((sum, c) => sum + Number(c.amount), 0);
 
   const outstandingPayments = courseCharges
-    .filter((c) => c.status === "pending" || c.status === "overdue")
+    .filter((c) => c.status === "pending" || c.status === "outstanding")
     .reduce((sum, c) => sum + Number(c.amount), 0);
 
   // Calculate total disbursed from transactions (top_up type)

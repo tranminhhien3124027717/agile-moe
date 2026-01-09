@@ -120,7 +120,7 @@ export default function AccountManagement() {
     return courseCharges.filter(
       (c) =>
         c.accountId === accountId &&
-        (c.status === "pending" || c.status === "overdue")
+        (c.status === "pending" || c.status === "outstanding")
     );
   };
 

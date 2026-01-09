@@ -1,6 +1,11 @@
-export type InSchoolStatus = 'in_school' | 'not_in_school';
-export type EducationLevel = 'primary' | 'secondary' | 'post_secondary' | 'tertiary' | 'postgraduate';
-export type ContinuingLearningStatus = 'active' | 'inactive' | 'completed';
+export type InSchoolStatus = "in_school" | "not_in_school";
+export type EducationLevel =
+  | "primary"
+  | "secondary"
+  | "post_secondary"
+  | "tertiary"
+  | "postgraduate";
+export type ContinuingLearningStatus = "active" | "inactive" | "completed";
 
 export interface AccountHolder {
   id: string;
@@ -12,7 +17,7 @@ export interface AccountHolder {
   residentialAddress: string;
   mailingAddress: string;
   balance: number;
-  status: 'active' | 'inactive' | 'closed' | 'pending';
+  status: "active" | "inactive" | "closed" | "pending";
   inSchool: InSchoolStatus;
   educationLevel?: EducationLevel;
   continuingLearning?: ContinuingLearningStatus;
@@ -23,16 +28,16 @@ export interface AccountHolder {
 export interface Transaction {
   id: string;
   accountId: string;
-  type: 'top_up' | 'course_fee' | 'payment' | 'refund';
+  type: "top_up" | "course_fee" | "payment" | "refund";
   amount: number;
   description: string;
   date: string;
-  status: 'completed' | 'pending' | 'failed';
+  status: "completed" | "pending" | "failed";
   reference?: string;
 }
 
-export type BillingCycle = 'monthly' | 'quarterly' | 'biannually' | 'yearly';
-export type PaymentType = 'one_time' | 'recurring';
+export type BillingCycle = "monthly" | "quarterly" | "biannually" | "yearly";
+export type PaymentType = "one_time" | "recurring";
 
 export interface Course {
   id: string;
@@ -41,7 +46,7 @@ export interface Course {
   billingCycle: BillingCycle;
   fee: number;
   description?: string;
-  status: 'active' | 'inactive';
+  status: "active" | "inactive";
 }
 
 export interface Enrollment {
@@ -49,7 +54,7 @@ export interface Enrollment {
   accountId: string;
   courseId: string;
   enrollmentDate: string;
-  status: 'active' | 'completed' | 'withdrawn';
+  status: "active" | "completed" | "withdrawn";
 }
 
 export interface TopUpRule {
@@ -63,11 +68,15 @@ export interface TopUpRule {
   educationLevel?: EducationLevel;
   continuingLearning?: ContinuingLearningStatus;
   amount: number;
-  status: 'active' | 'inactive';
+  status: "active" | "inactive";
 }
 
-export type TopUpScheduleType = 'batch' | 'individual';
-export type TopUpScheduleStatus = 'scheduled' | 'processing' | 'completed' | 'failed';
+export type TopUpScheduleType = "batch" | "individual";
+export type TopUpScheduleStatus =
+  | "scheduled"
+  | "processing"
+  | "completed"
+  | "failed";
 
 export interface TopUpSchedule {
   id: string;
@@ -95,7 +104,7 @@ export interface CourseCharge {
   courseName: string;
   amount: number;
   dueDate: string;
-  status: 'paid' | 'pending' | 'overdue';
+  status: "paid" | "pending" | "outstanding";
   paidDate?: string;
-  paymentMethod?: 'account_balance' | 'credit_card' | 'paynow';
+  paymentMethod?: "account_balance" | "credit_card" | "paynow";
 }

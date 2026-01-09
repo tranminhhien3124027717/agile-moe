@@ -435,7 +435,7 @@ export const seedDatabase = async () => {
         dueDate: formatDate(
           new Date(today.getFullYear(), today.getMonth() - 1, 5)
         ),
-        status: "overdue" as const,
+        status: "outstanding" as const,
       },
     ];
 
@@ -572,11 +572,17 @@ export const seedDatabase = async () => {
 
     // Seed Top-Up Schedules (Execution History)
     console.log("Creating top-up schedules and execution history...");
+
+    // Get rule names and account names for display
+    const ruleNames = rules.map((r) => r.name);
+    const accountNames = accountHolders.map((a) => a.name);
+
     const schedules = [
       // Completed batch top-ups (executed rules)
       {
         type: "batch" as const,
-        ruleId: ruleIds[0], // Tertiary Education Students
+        ruleId: ruleIds[0],
+        ruleName: ruleNames[0], // Tertiary Education Students
         amount: 2000,
         scheduledDate: "2025-01-15",
         executedDate: "2025-01-15",
@@ -587,7 +593,8 @@ export const seedDatabase = async () => {
       },
       {
         type: "batch" as const,
-        ruleId: ruleIds[1], // Post-Secondary Students
+        ruleId: ruleIds[1],
+        ruleName: ruleNames[1], // Post-Secondary Students
         amount: 500,
         scheduledDate: "2025-02-01",
         executedDate: "2025-02-01",
@@ -598,7 +605,8 @@ export const seedDatabase = async () => {
       },
       {
         type: "batch" as const,
-        ruleId: ruleIds[2], // Continuing Learners
+        ruleId: ruleIds[2],
+        ruleName: ruleNames[2], // Continuing Learners
         amount: 1500,
         scheduledDate: "2025-03-01",
         executedDate: "2025-03-01",
@@ -611,6 +619,7 @@ export const seedDatabase = async () => {
       {
         type: "individual" as const,
         accountId: accountIds[0],
+        accountName: accountNames[0],
         amount: 1000,
         scheduledDate: "2025-04-10",
         executedDate: "2025-04-10",
@@ -622,6 +631,7 @@ export const seedDatabase = async () => {
       {
         type: "individual" as const,
         accountId: accountIds[3],
+        accountName: accountNames[3],
         amount: 500,
         scheduledDate: "2025-05-15",
         executedDate: "2025-05-15",
@@ -633,7 +643,8 @@ export const seedDatabase = async () => {
       // Scheduled (upcoming)
       {
         type: "batch" as const,
-        ruleId: ruleIds[0], // Tertiary Education Students
+        ruleId: ruleIds[0],
+        ruleName: ruleNames[0], // Tertiary Education Students
         amount: 2000,
         scheduledDate: "2026-02-01",
         status: "scheduled" as const,
@@ -641,7 +652,8 @@ export const seedDatabase = async () => {
       },
       {
         type: "batch" as const,
-        ruleId: ruleIds[3], // Low Balance Support
+        ruleId: ruleIds[3],
+        ruleName: ruleNames[3], // Low Balance Support
         amount: 1000,
         scheduledDate: "2026-01-20",
         status: "scheduled" as const,
@@ -650,6 +662,7 @@ export const seedDatabase = async () => {
       {
         type: "individual" as const,
         accountId: accountIds[1],
+        accountName: accountNames[1],
         amount: 800,
         scheduledDate: "2026-01-25",
         status: "scheduled" as const,
@@ -659,6 +672,7 @@ export const seedDatabase = async () => {
       {
         type: "batch" as const,
         ruleId: ruleIds[1],
+        ruleName: ruleNames[1],
         amount: 500,
         scheduledDate: "2025-12-15",
         status: "canceled" as const,
@@ -667,6 +681,7 @@ export const seedDatabase = async () => {
       {
         type: "individual" as const,
         accountId: accountIds[2],
+        accountName: accountNames[2],
         amount: 600,
         scheduledDate: "2025-11-30",
         status: "canceled" as const,

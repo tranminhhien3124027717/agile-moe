@@ -158,7 +158,7 @@ export default function StudentDetail() {
   // Get student's course charges (must be defined before enrolledCourses)
   const studentCharges = courseCharges.filter((c) => c.accountId === accountId);
   const outstandingCharges = studentCharges.filter(
-    (c) => c.status === "pending" || c.status === "overdue"
+    (c) => c.status === "pending" || c.status === "outstanding"
   );
   const clearCharges = studentCharges.filter((c) => c.status === "paid");
   const totalOutstanding = outstandingCharges.reduce(
@@ -212,22 +212,19 @@ export default function StudentDetail() {
         .filter((c) => c.status === "paid")
         .reduce((sum, c) => sum + Number(c.amount), 0);
 
-      // Determine payment status
-      const hasOverdue = courseChargesForEnrollment.some(
-        (c) => c.status === "overdue"
-      );
+      // Determine payment status: scheduled, outstanding, fully_paid
       const hasPending = courseChargesForEnrollment.some(
-        (c) => c.status === "pending"
+        (c) => c.status === "pending" || c.status === "outstanding"
       );
       const allPaid =
         courseChargesForEnrollment.length > 0 &&
         courseChargesForEnrollment.every((c) => c.status === "paid");
 
-      let paymentStatus: "overdue" | "pending" | "fully_paid" = "pending";
-      if (hasOverdue) paymentStatus = "overdue";
-      else if (hasPending) paymentStatus = "pending";
+      let paymentStatus: "scheduled" | "outstanding" | "fully_paid" =
+        "scheduled";
+      if (hasPending) paymentStatus = "outstanding";
       else if (allPaid) paymentStatus = "fully_paid";
-      // If no charges yet, default to "pending" (awaiting first charge)
+      // If no charges yet, default to "scheduled" (awaiting first charge)
 
       const nextPaymentDate = calculateNextPaymentDate(
         e.enrollmentDate,
@@ -255,7 +252,7 @@ export default function StudentDetail() {
     billingCycle: string;
     enrollmentDate: string;
     nextPaymentDate: Date;
-    paymentStatus: "overdue" | "outstanding" | "fully_paid";
+    paymentStatus: "scheduled" | "outstanding" | "fully_paid";
     totalFee: number;
     totalCollected: number;
   }[];

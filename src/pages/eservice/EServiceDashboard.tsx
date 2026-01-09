@@ -85,17 +85,16 @@ export default function EServiceDashboard() {
         .filter((c) => c.status === "paid")
         .reduce((sum, c) => sum + Number(c.amount), 0);
 
-      // Determine payment status
-      const hasOverdue = userCharges.some((c) => c.status === "overdue");
+      // Determine payment status: scheduled, outstanding, fully_paid
       const hasPending = userCharges.some((c) => c.status === "pending");
       const allPaid =
         userCharges.length > 0 && userCharges.every((c) => c.status === "paid");
 
-      let paymentStatus: "overdue" | "pending" | "fully_paid" = "pending";
-      if (hasOverdue) paymentStatus = "overdue";
-      else if (hasPending) paymentStatus = "pending";
+      let paymentStatus: "scheduled" | "outstanding" | "fully_paid" =
+        "scheduled";
+      if (hasPending) paymentStatus = "outstanding";
       else if (allPaid) paymentStatus = "fully_paid";
-      // If no charges yet, default to "pending" (awaiting first charge)
+      // If no charges yet, default to "scheduled" (awaiting first charge)
 
       return {
         id: enrollment.id,
@@ -120,7 +119,7 @@ export default function EServiceDashboard() {
     totalCollected: number;
     enrollmentDate: string;
     nextPaymentDate: Date;
-    paymentStatus: "overdue" | "outstanding" | "fully_paid";
+    paymentStatus: "scheduled" | "outstanding" | "fully_paid";
   }[];
 
   const billingCycleLabels: Record<string, string> = {

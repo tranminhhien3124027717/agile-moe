@@ -1,14 +1,21 @@
-import { useState } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
-import { ArrowLeft, Plus, Search, UserMinus } from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { StatusBadge } from '@/components/shared/StatusBadge';
-import { useCourses } from '@/hooks/useCourses';
-import { useEnrollments, useCreateEnrollment, useDeleteEnrollment } from '@/hooks/useEnrollments';
-import { useAccountHolders } from '@/hooks/useAccountHolders';
-import { useCourseCharges, useCreateCourseCharge } from '@/hooks/useCourseCharges';
+import { useState } from "react";
+import { useParams, useNavigate } from "react-router-dom";
+import { ArrowLeft, Plus, Search, UserMinus } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { StatusBadge } from "@/components/shared/StatusBadge";
+import { useCourses } from "@/hooks/useCourses";
+import {
+  useEnrollments,
+  useCreateEnrollment,
+  useDeleteEnrollment,
+} from "@/hooks/useEnrollments";
+import { useAccountHolders } from "@/hooks/useAccountHolders";
+import {
+  useCourseCharges,
+  useCreateCourseCharge,
+} from "@/hooks/useCourseCharges";
 import {
   Table,
   TableBody,
@@ -16,7 +23,7 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from '@/components/ui/table';
+} from "@/components/ui/table";
 import {
   Dialog,
   DialogContent,
@@ -24,7 +31,7 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from '@/components/ui/dialog';
+} from "@/components/ui/dialog";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -34,24 +41,27 @@ import {
   AlertDialogFooter,
   AlertDialogHeader,
   AlertDialogTitle,
-} from '@/components/ui/alert-dialog';
+} from "@/components/ui/alert-dialog";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@/components/ui/select';
-import { toast } from 'sonner';
+} from "@/components/ui/select";
+import { toast } from "sonner";
 
 export default function CourseStudents() {
   const { courseId } = useParams();
   const navigate = useNavigate();
   const [isAddStudentDialogOpen, setIsAddStudentDialogOpen] = useState(false);
-  const [selectedStudentId, setSelectedStudentId] = useState('');
-  const [searchQuery, setSearchQuery] = useState('');
+  const [selectedStudentId, setSelectedStudentId] = useState("");
+  const [searchQuery, setSearchQuery] = useState("");
   const [unenrollDialogOpen, setUnenrollDialogOpen] = useState(false);
-  const [enrollmentToUnenroll, setEnrollmentToUnenroll] = useState<{ id: string; studentName: string } | null>(null);
+  const [enrollmentToUnenroll, setEnrollmentToUnenroll] = useState<{
+    id: string;
+    studentName: string;
+  } | null>(null);
 
   // Fetch data from database
   const { data: courses = [], isLoading: loadingCourses } = useCourses();
@@ -62,7 +72,7 @@ export default function CourseStudents() {
   const createCourseChargeMutation = useCreateCourseCharge();
   const deleteEnrollmentMutation = useDeleteEnrollment();
 
-  const course = courses.find(c => c.id === courseId);
+  const course = courses.find((c) => c.id === courseId);
 
   if (loadingCourses) {
     return (
@@ -75,7 +85,11 @@ export default function CourseStudents() {
   if (!course) {
     return (
       <div className="space-y-6 animate-fade-in">
-        <Button variant="ghost" onClick={() => navigate('/admin/courses')} className="gap-2">
+        <Button
+          variant="ghost"
+          onClick={() => navigate("/admin/courses")}
+          className="gap-2"
+        >
           <ArrowLeft className="h-4 w-4" />
           Back to Courses
         </Button>
@@ -87,28 +101,30 @@ export default function CourseStudents() {
   }
 
   // Get enrolled students with their payment status
-  const courseEnrollments = enrollments.filter(e => e.courseId === course.id);
-  
-  const enrolledStudents = courseEnrollments.map(enrollment => {
-    const student = accountHolders.find(a => a.id === enrollment.accountId);
+  const courseEnrollments = enrollments.filter((e) => e.courseId === course.id);
+
+  const enrolledStudents = courseEnrollments.map((enrollment) => {
+    const student = accountHolders.find((a) => a.id === enrollment.accountId);
     const charges = courseCharges.filter(
-      c => c.accountId === enrollment.accountId && c.courseId === course.id
+      (c) => c.accountId === enrollment.accountId && c.courseId === course.id
     );
-    
+
     // Determine overall payment status
-    const hasOverdue = charges.some(c => c.status === 'overdue');
-    const hasOutstanding = charges.some(c => c.status === 'outstanding');
-    const allClear = charges.length > 0 && charges.every(c => c.status === 'clear');
-    
-    let paymentStatus: 'overdue' | 'outstanding' | 'clear' | 'no_charges' = 'no_charges';
-    if (hasOverdue) paymentStatus = 'overdue';
-    else if (hasOutstanding) paymentStatus = 'outstanding';
-    else if (allClear) paymentStatus = 'clear';
-    
+    const hasPending = charges.some((c) => c.status === "pending");
+    const hasOutstanding = charges.some((c) => c.status === "outstanding");
+    const allClear =
+      charges.length > 0 && charges.every((c) => c.status === "paid");
+
+    let paymentStatus: "pending" | "outstanding" | "paid" | "no_charges" =
+      "no_charges";
+    if (hasOutstanding) paymentStatus = "outstanding";
+    else if (hasPending) paymentStatus = "pending";
+    else if (allClear) paymentStatus = "paid";
+
     const totalOwed = charges
-      .filter(c => c.status !== 'clear')
+      .filter((c) => c.status !== "paid")
       .reduce((sum, c) => sum + Number(c.amount), 0);
-    
+
     return {
       id: enrollment.id,
       student,
@@ -120,46 +136,47 @@ export default function CourseStudents() {
   });
 
   // Get students not enrolled in this course
-  const enrolledStudentIds = courseEnrollments.map(e => e.accountId);
+  const enrolledStudentIds = courseEnrollments.map((e) => e.accountId);
   const availableStudents = accountHolders.filter(
-    student => !enrolledStudentIds.includes(student.id)
+    (student) => !enrolledStudentIds.includes(student.id)
   );
 
   // Filter available students by search query
-  const filteredAvailableStudents = availableStudents.filter(student =>
-    student.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    student.nric.toLowerCase().includes(searchQuery.toLowerCase())
+  const filteredAvailableStudents = availableStudents.filter(
+    (student) =>
+      student.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      student.nric.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
   // Calculate due date based on billing cycle
   const calculateDueDate = (billingCycle: string): string => {
     const today = new Date();
     switch (billingCycle) {
-      case 'monthly':
+      case "monthly":
         today.setDate(today.getDate() + 30);
         break;
-      case 'quarterly':
+      case "quarterly":
         today.setDate(today.getDate() + 90);
         break;
-      case 'biannually':
+      case "biannually":
         today.setDate(today.getDate() + 180);
         break;
-      case 'yearly':
+      case "yearly":
         today.setDate(today.getDate() + 365);
         break;
       default:
         today.setDate(today.getDate() + 30);
     }
-    return today.toISOString().split('T')[0];
+    return today.toISOString().split("T")[0];
   };
 
   const handleAddStudent = async () => {
     if (!selectedStudentId) {
-      toast.error('Please select a student');
+      toast.error("Please select a student");
       return;
     }
 
-    const student = accountHolders.find(s => s.id === selectedStudentId);
+    const student = accountHolders.find((s) => s.id === selectedStudentId);
     if (!student) return;
 
     try {
@@ -167,8 +184,8 @@ export default function CourseStudents() {
       await createEnrollmentMutation.mutateAsync({
         accountId: selectedStudentId,
         courseId: course.id,
-        enrollmentDate: new Date().toISOString().split('T')[0],
-        status: 'active',
+        enrollmentDate: new Date().toISOString().split("T")[0],
+        status: "active",
       });
 
       // Auto-create course charge
@@ -180,17 +197,17 @@ export default function CourseStudents() {
           amount: course.fee,
           amountPaid: 0,
           dueDate: calculateDueDate(course.billingCycle),
-          status: 'outstanding',
+          status: "outstanding",
           paidDate: null,
           paymentMethod: null,
         });
       } catch (chargeError) {
-        console.error('Failed to create course charge:', chargeError);
-        toast.warning('Enrolled successfully, but failed to create charge');
+        console.error("Failed to create course charge:", chargeError);
+        toast.warning("Enrolled successfully, but failed to create charge");
       }
 
-      setSelectedStudentId('');
-      setSearchQuery('');
+      setSelectedStudentId("");
+      setSearchQuery("");
       setIsAddStudentDialogOpen(false);
     } catch (error) {
       // Error handled by mutation
@@ -204,7 +221,7 @@ export default function CourseStudents() {
 
   const handleConfirmUnenroll = async () => {
     if (!enrollmentToUnenroll) return;
-    
+
     try {
       await deleteEnrollmentMutation.mutateAsync(enrollmentToUnenroll.id);
       setUnenrollDialogOpen(false);
@@ -219,9 +236,9 @@ export default function CourseStudents() {
       {/* Back Button & Header */}
       <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4">
         <div>
-          <Button 
-            variant="ghost" 
-            onClick={() => navigate('/admin/courses')} 
+          <Button
+            variant="ghost"
+            onClick={() => navigate("/admin/courses")}
             className="gap-2 mb-4 -ml-2"
           >
             <ArrowLeft className="h-4 w-4" />
@@ -233,7 +250,10 @@ export default function CourseStudents() {
           </p>
         </div>
 
-        <Dialog open={isAddStudentDialogOpen} onOpenChange={setIsAddStudentDialogOpen}>
+        <Dialog
+          open={isAddStudentDialogOpen}
+          onOpenChange={setIsAddStudentDialogOpen}
+        >
           <DialogTrigger asChild>
             <Button variant="accent" className="gap-2">
               <Plus className="h-4 w-4" />
@@ -259,23 +279,28 @@ export default function CourseStudents() {
                     className="pl-9"
                   />
                 </div>
-                <Select value={selectedStudentId} onValueChange={setSelectedStudentId}>
+                <Select
+                  value={selectedStudentId}
+                  onValueChange={setSelectedStudentId}
+                >
                   <SelectTrigger>
                     <SelectValue placeholder="Select a student" />
                   </SelectTrigger>
                   <SelectContent>
                     {filteredAvailableStudents.length === 0 ? (
                       <div className="py-4 text-center text-sm text-muted-foreground">
-                        {availableStudents.length === 0 
-                          ? 'All students are already enrolled' 
-                          : 'No students found'}
+                        {availableStudents.length === 0
+                          ? "All students are already enrolled"
+                          : "No students found"}
                       </div>
                     ) : (
-                      filteredAvailableStudents.map(student => (
+                      filteredAvailableStudents.map((student) => (
                         <SelectItem key={student.id} value={student.id}>
                           <div className="flex flex-col">
                             <span>{student.name}</span>
-                            <span className="text-xs text-muted-foreground">{student.nric}</span>
+                            <span className="text-xs text-muted-foreground">
+                              {student.nric}
+                            </span>
                           </div>
                         </SelectItem>
                       ))
@@ -285,22 +310,26 @@ export default function CourseStudents() {
               </div>
             </div>
             <div className="flex justify-end gap-3">
-              <Button 
-                variant="outline" 
+              <Button
+                variant="outline"
                 onClick={() => {
-                  setSelectedStudentId('');
-                  setSearchQuery('');
+                  setSelectedStudentId("");
+                  setSearchQuery("");
                   setIsAddStudentDialogOpen(false);
                 }}
               >
                 Cancel
               </Button>
-              <Button 
-                variant="accent" 
+              <Button
+                variant="accent"
                 onClick={handleAddStudent}
-                disabled={!selectedStudentId || createEnrollmentMutation.isPending}
+                disabled={
+                  !selectedStudentId || createEnrollmentMutation.isPending
+                }
               >
-                {createEnrollmentMutation.isPending ? 'Enrolling...' : 'Enroll Student'}
+                {createEnrollmentMutation.isPending
+                  ? "Enrolling..."
+                  : "Enroll Student"}
               </Button>
             </div>
           </DialogContent>
@@ -319,10 +348,16 @@ export default function CourseStudents() {
               <TableRow className="bg-muted/50 hover:bg-muted/50">
                 <TableHead className="font-semibold">Student</TableHead>
                 <TableHead className="font-semibold">Enrolled Date</TableHead>
-                <TableHead className="font-semibold">Enrollment Status</TableHead>
+                <TableHead className="font-semibold">
+                  Enrollment Status
+                </TableHead>
                 <TableHead className="font-semibold">Payment Status</TableHead>
-                <TableHead className="font-semibold text-right">Outstanding</TableHead>
-                <TableHead className="font-semibold text-right">Actions</TableHead>
+                <TableHead className="font-semibold text-right">
+                  Outstanding
+                </TableHead>
+                <TableHead className="font-semibold text-right">
+                  Actions
+                </TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -330,27 +365,38 @@ export default function CourseStudents() {
                 <TableRow key={item.id}>
                   <TableCell>
                     <div>
-                      <p className="font-medium text-foreground">{item.student?.name}</p>
-                      <p className="text-xs text-muted-foreground">{item.student?.nric}</p>
+                      <p className="font-medium text-foreground">
+                        {item.student?.name}
+                      </p>
+                      <p className="text-xs text-muted-foreground">
+                        {item.student?.nric}
+                      </p>
                     </div>
                   </TableCell>
                   <TableCell className="text-muted-foreground">
-                    {new Date(item.enrollment.enrollmentDate).toLocaleDateString()}
+                    {new Date(
+                      item.enrollment.enrollmentDate
+                    ).toLocaleDateString()}
                   </TableCell>
                   <TableCell>
                     <StatusBadge status={item.enrollment.status} />
                   </TableCell>
                   <TableCell>
-                    <StatusBadge 
+                    <StatusBadge
                       status={
-                        item.paymentStatus === 'clear' ? 'completed' :
-                        item.paymentStatus === 'outstanding' ? 'outstanding' :
-                        item.paymentStatus === 'overdue' ? 'overdue' :
-                        'outstanding'
-                      } 
+                        item.paymentStatus === "paid"
+                          ? "completed"
+                          : item.paymentStatus === "outstanding"
+                          ? "outstanding"
+                          : item.paymentStatus === "pending"
+                          ? "pending"
+                          : "scheduled"
+                      }
                     />
-                    {item.paymentStatus === 'overdue' && (
-                      <span className="ml-2 text-xs text-destructive font-medium">Overdue</span>
+                    {item.paymentStatus === "outstanding" && (
+                      <span className="ml-2 text-xs text-warning font-medium">
+                        Outstanding
+                      </span>
                     )}
                   </TableCell>
                   <TableCell className="text-right">
@@ -367,7 +413,12 @@ export default function CourseStudents() {
                       variant="ghost"
                       size="sm"
                       className="text-destructive hover:text-destructive hover:bg-destructive/10"
-                      onClick={() => handleUnenrollClick(item.id, item.student?.name || 'Unknown')}
+                      onClick={() =>
+                        handleUnenrollClick(
+                          item.id,
+                          item.student?.name || "Unknown"
+                        )
+                      }
                     >
                       <UserMinus className="h-4 w-4 mr-1" />
                       Remove
@@ -381,13 +432,17 @@ export default function CourseStudents() {
       )}
 
       {/* Unenroll Confirmation Dialog */}
-      <AlertDialog open={unenrollDialogOpen} onOpenChange={setUnenrollDialogOpen}>
+      <AlertDialog
+        open={unenrollDialogOpen}
+        onOpenChange={setUnenrollDialogOpen}
+      >
         <AlertDialogContent>
           <AlertDialogHeader>
             <AlertDialogTitle>Unenroll Student</AlertDialogTitle>
             <AlertDialogDescription>
-              Are you sure you want to unenroll {enrollmentToUnenroll?.studentName} from this course? 
-              This action cannot be undone.
+              Are you sure you want to unenroll{" "}
+              {enrollmentToUnenroll?.studentName} from this course? This action
+              cannot be undone.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
@@ -398,7 +453,9 @@ export default function CourseStudents() {
               onClick={handleConfirmUnenroll}
               className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
             >
-              {deleteEnrollmentMutation.isPending ? 'Unenrolling...' : 'Unenroll'}
+              {deleteEnrollmentMutation.isPending
+                ? "Unenrolling..."
+                : "Unenroll"}
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>

@@ -9,7 +9,7 @@ export type EducationLevel =
   | "tertiary"
   | "postgraduate";
 export type ContinuingLearningStatus = "active" | "inactive" | "completed";
-export type ChargeStatus = "paid" | "pending" | "overdue";
+export type ChargeStatus = "paid" | "pending" | "outstanding";
 export type CourseStatus = "active" | "inactive";
 export type EnrollmentStatus = "active" | "completed" | "withdrawn";
 export type RuleStatus = "active" | "inactive";
