@@ -56,7 +56,7 @@ const statusStyles: Record<Status, string> = {
   scheduled: "bg-warning/10 text-warning border-warning/20",
   processing: "bg-warning/10 text-warning border-warning/20",
   canceled: "bg-muted text-muted-foreground border-muted",
-  outstanding: "bg-warning/10 text-warning border-warning/20",
+  outstanding: "bg-destructive/10 text-destructive border-destructive/20",
   clear: "bg-success/10 text-success border-success/20",
   fully_paid: "bg-success/10 text-success border-success/20",
   partially_paid: "bg-accent/10 text-accent border-accent/20",
