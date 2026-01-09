@@ -211,15 +211,10 @@ export default function EServiceDashboard() {
           (item.nextPaymentDate.getTime() - new Date().getTime()) /
             (1000 * 60 * 60 * 24)
         );
-        const isUpcoming = daysUntil <= 7;
 
         return (
           <div>
-            <p
-              className={`font-medium ${
-                isUpcoming ? "text-warning" : "text-foreground"
-              }`}
-            >
+            <p className="font-medium text-foreground">
               {item.nextPaymentDate.toLocaleDateString("en-GB", {
                 day: "2-digit",
                 month: "2-digit",
