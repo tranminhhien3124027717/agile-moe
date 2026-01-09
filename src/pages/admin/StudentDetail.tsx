@@ -212,9 +212,12 @@ export default function StudentDetail() {
         .filter((c) => c.status === "paid")
         .reduce((sum, c) => sum + Number(c.amount), 0);
 
-      // Determine payment status: scheduled, outstanding, fully_paid
+      // Determine payment status based on charge statuses
+      const hasOutstanding = courseChargesForEnrollment.some(
+        (c) => c.status === "outstanding"
+      );
       const hasPending = courseChargesForEnrollment.some(
-        (c) => c.status === "pending" || c.status === "outstanding"
+        (c) => c.status === "pending"
       );
       const allPaid =
         courseChargesForEnrollment.length > 0 &&
@@ -222,8 +225,17 @@ export default function StudentDetail() {
 
       let paymentStatus: "scheduled" | "outstanding" | "fully_paid" =
         "scheduled";
-      if (hasPending) paymentStatus = "outstanding";
-      else if (allPaid) paymentStatus = "fully_paid";
+
+      if (hasOutstanding) {
+        // If any charge is outstanding (overdue), show outstanding
+        paymentStatus = "outstanding";
+      } else if (hasPending) {
+        // If has pending charges (not yet due), show scheduled
+        paymentStatus = "scheduled";
+      } else if (allPaid) {
+        // If all charges are paid, show fully paid
+        paymentStatus = "fully_paid";
+      }
       // If no charges yet, default to "scheduled" (awaiting first charge)
 
       const nextPaymentDate = calculateNextPaymentDate(

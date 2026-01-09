@@ -85,15 +85,28 @@ export default function EServiceDashboard() {
         .filter((c) => c.status === "paid")
         .reduce((sum, c) => sum + Number(c.amount), 0);
 
-      // Determine payment status: scheduled, outstanding, fully_paid
+      // Determine payment status based on charge statuses and due dates
+      const today = new Date();
+      const hasOutstanding = userCharges.some(
+        (c) => c.status === "outstanding"
+      );
       const hasPending = userCharges.some((c) => c.status === "pending");
       const allPaid =
         userCharges.length > 0 && userCharges.every((c) => c.status === "paid");
 
       let paymentStatus: "scheduled" | "outstanding" | "fully_paid" =
         "scheduled";
-      if (hasPending) paymentStatus = "outstanding";
-      else if (allPaid) paymentStatus = "fully_paid";
+
+      if (hasOutstanding) {
+        // If any charge is outstanding (overdue), show outstanding
+        paymentStatus = "outstanding";
+      } else if (hasPending) {
+        // If has pending charges (not yet due), show scheduled
+        paymentStatus = "scheduled";
+      } else if (allPaid) {
+        // If all charges are paid, show fully paid
+        paymentStatus = "fully_paid";
+      }
       // If no charges yet, default to "scheduled" (awaiting first charge)
 
       return {
