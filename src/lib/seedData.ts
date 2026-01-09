@@ -362,10 +362,10 @@ export const seedDatabase = async () => {
         billingCycle: "monthly" as const,
         fee: 300,
         description:
-          "6-month intensive web development bootcamp covering HTML, CSS, JavaScript, and React",
+          "1-month intensive web development bootcamp covering HTML, CSS, JavaScript, and React",
         status: "active" as const,
         courseRunStart: "2025-01-01",
-        courseRunEnd: "2025-12-31", // Course ended in 2025
+        courseRunEnd: "2025-01-31", // 1-month course (completed)
         intakeSize: 50,
         mainLocation: "Online",
         modeOfTraining: "Part-time Online",

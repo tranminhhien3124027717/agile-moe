@@ -85,22 +85,42 @@ export default function EServiceDashboard() {
         .filter((c) => c.status === "paid")
         .reduce((sum, c) => sum + Number(c.amount), 0);
 
+      // Calculate expected total fee based on course duration
+      const courseStart = new Date(course.courseRunStart);
+      const courseEnd = course.courseRunEnd
+        ? new Date(course.courseRunEnd)
+        : null;
+      const today = new Date();
+
+      let expectedTotalFee = totalFee; // Default to charges created so far
+      if (courseEnd) {
+        const monthsDuration = Math.ceil(
+          (courseEnd.getTime() - courseStart.getTime()) /
+            (1000 * 60 * 60 * 24 * 30)
+        );
+        if (course.billingCycle === "monthly") {
+          expectedTotalFee = course.fee * monthsDuration;
+        } else if (course.billingCycle === "quarterly") {
+          const quarters = Math.ceil(monthsDuration / 3);
+          expectedTotalFee = course.fee * quarters;
+        }
+      }
+
       // Determine payment status based on charge statuses and collected amount
       // Logic:
       // - scheduled: All current charges paid, course ongoing (waiting for future charges)
       // - outstanding: Has unpaid charges (pending or outstanding)
-      // - fully_paid: All charges paid AND totalCollected = totalFee (course completed, no more charges)
+      // - fully_paid: All charges paid AND totalCollected >= expectedTotalFee (course completed)
 
-      const today = new Date();
       const hasUnpaid = userCharges.some(
         (c) => c.status === "outstanding" || c.status === "pending"
       );
       const allPaid =
         userCharges.length > 0 && userCharges.every((c) => c.status === "paid");
 
-      // Check if course expects more charges based on totalFee vs totalCollected
-      // If totalCollected >= totalFee, course is fully paid (no more charges expected)
-      const isFullyPaid = allPaid && totalCollected >= totalFee && totalFee > 0;
+      // Check if course is fully paid based on expected total fee
+      const isFullyPaid =
+        allPaid && totalCollected >= expectedTotalFee && expectedTotalFee > 0;
 
       let paymentStatus: "scheduled" | "outstanding" | "fully_paid" =
         "scheduled";
@@ -109,10 +129,10 @@ export default function EServiceDashboard() {
         // Has unpaid charges (pending or outstanding) → Outstanding
         paymentStatus = "outstanding";
       } else if (isFullyPaid) {
-        // All paid AND collected >= totalFee → Fully Paid (no more charges expected)
+        // All paid AND collected >= expectedTotalFee → Fully Paid (no more charges expected)
         paymentStatus = "fully_paid";
       } else if (allPaid) {
-        // All current charges paid, but totalCollected < totalFee → Scheduled (waiting for future charges)
+        // All current charges paid, but totalCollected < expectedTotalFee → Scheduled (waiting for future charges)
         paymentStatus = "scheduled";
       }
       // If no charges yet, default to "scheduled" (awaiting first charge)
